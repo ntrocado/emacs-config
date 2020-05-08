@@ -120,7 +120,8 @@
 
 (use-package org
   :ensure org-plus-contrib
-  :pin org)
+  :pin org
+  :custom (org-startup-indented t))
 
 (use-package org-roam
   :ensure t
