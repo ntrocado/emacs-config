@@ -1,9 +1,9 @@
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 (defun generic-path (path)
-  (expand-file-name path (case system-type
-			   ('windows-nt "c:/")
-			   ('gnu/linux "/mnt/c/"))))
+  (expand-file-name path (cond
+			  ((eql system-type 'windows-nt) "c:/")
+			  ((eql system-type 'gnu/linux) "/mnt/c/"))))
 
 (defun lab-path (file)
   (expand-file-name file (generic-path "Users/trocado/OneDrive/lab/")))
