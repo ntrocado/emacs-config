@@ -41,7 +41,8 @@
       column-number-mode t
       mouse-wheel-scroll-amount '(1 ((shift) . 1))
       mouse-wheel-progressive-speed nil
-      inhibit-startup-message t)
+      inhibit-startup-message t
+      sentence-end-double-space nil)
 
 ;;; Backups
 (setq backup-directory-alist
