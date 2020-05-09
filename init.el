@@ -125,8 +125,7 @@
 
 (use-package org-roam
   :ensure t
-  :hook 
-  (after-init . org-roam-mode)
+  :hook (after-init . org-roam-mode)
   :custom
   (org-roam-directory "/mnt/c/Users/trocado/OneDrive/Roam")
   (org-roam-completion-system 'ivy)
@@ -144,6 +143,13 @@
 	org-ref-bibliography-notes (lab-path "notes.org")
 	org-ref-default-bibliography (list (lab-path "master.bib"))
 	org-ref-pdf-directory (lab-path "pdf/")))
+
+(use-package org-roam-bibtex
+  :ensure t
+  :after (org-roam org-ref ivy-bibtex)
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :bind (:map org-mode-map
+         (("C-c n a" . orb-note-actions))))
 
 ;;; Other config files
 (load-file (expand-file-name "notmuch-config.el" user-emacs-directory))
