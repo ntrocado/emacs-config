@@ -126,7 +126,17 @@
 
 (use-package org-roam
   :ensure t
-  :hook (after-init . org-roam-mode)
+  :hook
+  (after-init . org-roam-mode)
+  :config
+  ;; open org-roam buffer after org-roam-find-file
+  (add-hook 'find-file-hook
+    (defun +org-roam-open-buffer-maybe-h ()
+      (and (memq 'org-roam-buffer--update-maybe post-command-hook)
+           (not (window-parameter nil 'window-side)) ; don't proc for popups
+           (not (eq 'visible (org-roam-buffer--visibility)))
+           (with-current-buffer (window-buffer)
+             (org-roam-buffer--get-create)))))
   :custom
   (org-roam-directory "/mnt/c/Users/trocado/OneDrive/Roam")
   (org-roam-completion-system 'ivy)
