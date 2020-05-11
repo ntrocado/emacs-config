@@ -149,9 +149,9 @@
 
 (use-package org-ref
   :ensure t
+  :preface (setq org-ref-completion-library 'org-ref-ivy-cite)
   :config
-  (setq org-ref-completion-library 'org-ref-ivy-cite
-	org-ref-bibliography-notes (lab-path "notes.org")
+  (setq org-ref-bibliography-notes (lab-path "notes.org")
 	org-ref-default-bibliography (list (lab-path "master.bib"))
 	org-ref-pdf-directory (lab-path "pdf/")))
 
