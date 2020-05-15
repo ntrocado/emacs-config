@@ -42,7 +42,8 @@
       mouse-wheel-scroll-amount '(1 ((shift) . 1))
       mouse-wheel-progressive-speed nil
       inhibit-startup-message t
-      sentence-end-double-space nil)
+      sentence-end-double-space nil
+      enable-recursive-minibuffers t)
 
 ;;; Backups
 (setq backup-directory-alist
