@@ -73,5 +73,8 @@
 
 (add-hook 'notmuch-hello-refresh-hook 'notmuch-hello-refresh-status-message)
 
+(use-package counsel-notmuch
+  :ensure t)
+
 (use-package nm
   :ensure t)
