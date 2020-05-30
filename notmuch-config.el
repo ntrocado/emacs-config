@@ -72,3 +72,6 @@
       (setq notmuch-hello-refresh-count new-count))))
 
 (add-hook 'notmuch-hello-refresh-hook 'notmuch-hello-refresh-status-message)
+
+(use-package nm
+  :ensure t)
