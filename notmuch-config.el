@@ -41,13 +41,13 @@
       (lambda ()
         "mark messages for deletion by adding the trash tag"
         (interactive)
-        (notmuch-show-tag (list "+trash"))))
+        (notmuch-show-tag (list "+trash" "-inbox"))))
 
 (define-key notmuch-search-mode-map "d"
       (lambda (&optional beg end)
         "mark thread for deletion by adding the trash tag"
         (interactive)
-        (notmuch-search-tag (list "+trash") beg end)))
+        (notmuch-search-tag (list "+trash" "-inbox") beg end)))
 
 ;;; notmuch-hello refresh status message
 
