@@ -57,7 +57,9 @@
 ;;; Spell checking
 (setq ispell-program-name "hunspell")
 
+
 ;;; Packages
+
 (use-package counsel
   :ensure t
   :config
