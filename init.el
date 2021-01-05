@@ -119,7 +119,8 @@
 (use-package sly
   :ensure t
   :config (setq sly-autodoc-mode t
-		sly-lisp-implementations '((sbcl ("sbcl")))))
+		sly-lisp-implementations '((sbcl ("sbcl"))
+					   (ccl ("~/ccl-dev/ccl/lx86cl64")))))
 
 (use-package paredit
   :ensure t
@@ -181,6 +182,9 @@
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :bind (:map org-mode-map
          (("C-c n a" . orb-note-actions))))
+
+(use-package pdf-tools
+  :config (pdf-loader-install))
 
 ;;; Other config files
 (load-file (expand-file-name "notmuch-config.el" user-emacs-directory))
