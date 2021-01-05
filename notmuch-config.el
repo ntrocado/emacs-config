@@ -78,3 +78,6 @@
 
 (use-package nm
   :ensure t)
+
+;;; Attach files from dired
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
