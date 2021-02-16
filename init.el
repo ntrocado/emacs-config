@@ -184,7 +184,9 @@
          (("C-c n a" . orb-note-actions))))
 
 (use-package pdf-tools
-  :config (pdf-loader-install))
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install :no-query))
 
 ;;; Other config files
 (load-file (expand-file-name "notmuch-config.el" user-emacs-directory))
