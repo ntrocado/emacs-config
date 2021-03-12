@@ -190,6 +190,10 @@
   :config
   (pdf-tools-install :no-query))
 
+(add-hook 'LilyPond-mode-hook
+	  #'(lambda ()
+	      (hack-local-variables)))
+
 ;;; Other config files
 (load-file (expand-file-name "notmuch-config.el" user-emacs-directory))
 
