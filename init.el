@@ -167,7 +167,8 @@
 	       ("C-c n f" . org-roam-find-file)
 	       ("C-c n g" . org-roam-show-graph))
 	      :map org-mode-map
-	      (("C-c n i" . org-roam-insert))))
+	      (("C-c n i" . org-roam-insert))
+	      (("C-c n I" . org-roam-insert-immediate))))
 
 (use-package org-ref
   :ensure t
