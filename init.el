@@ -46,8 +46,9 @@
       enable-recursive-minibuffers t)
 
 ;;; Backups
-(setq backup-directory-alist
-      `(("." . ,(concat user-emacs-directory "backups"))))
+(let ((backup-dir (concat user-emacs-directory "backups")))
+  (setq backup-directory-alist (list (cons ".*" backup-dir))
+	auto-save-file-name-transforms (list (list ".*" backup-dir t))))
 
 ;;; Global key bindings
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
