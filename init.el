@@ -43,7 +43,8 @@
       mouse-wheel-progressive-speed nil
       inhibit-startup-message t
       sentence-end-double-space nil
-      enable-recursive-minibuffers t)
+      enable-recursive-minibuffers t
+      recentf-max-saved-items 50)
 
 ;;; Backups
 (let ((backup-dir (concat user-emacs-directory "backups")))
