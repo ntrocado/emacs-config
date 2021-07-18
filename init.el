@@ -150,27 +150,19 @@
 
 (use-package org-roam
   :ensure t
-  :hook
-  (after-init . org-roam-mode)
   :config
-  ;; open org-roam buffer after org-roam-find-file
-  (add-hook 'find-file-hook
-    (defun +org-roam-open-buffer-maybe-h ()
-      (and (memq 'org-roam-buffer--update-maybe post-command-hook)
-           (not (window-parameter nil 'window-side)) ; don't proc for popups
-           (not (eq 'visible (org-roam-buffer--visibility)))
-           (with-current-buffer (window-buffer)
-             (org-roam-buffer--get-create)))))
+  (org-roam-setup)
+  (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory "/mnt/c/Users/trocado/OneDrive/Roam")
   (org-roam-completion-system 'ivy)
-  :bind (:map org-roam-mode-map
-	      (("C-c n l" . org-roam)
-	       ("C-c n f" . org-roam-find-file)
-	       ("C-c n g" . org-roam-show-graph))
-	      :map org-mode-map
-	      (("C-c n i" . org-roam-insert))
-	      (("C-c n I" . org-roam-insert-immediate))))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today)))
 
 (use-package org-ref
   :ensure t
