@@ -2,7 +2,8 @@
   :ensure t)
 
 (use-package notmuch
-  :ensure t
+  ;:ensure t
+  :pin manual
   :init (setq notmuch-search-oldest-first nil))
 
 ; configure outgoing SMTP
@@ -72,11 +73,13 @@
 
 (add-hook 'notmuch-hello-refresh-hook 'notmuch-hello-refresh-status-message)
 
-(use-package counsel-notmuch
-  :ensure t)
+;; (use-package counsel-notmuch
+;;   :ensure t
+;;   )
 
-(use-package nm
-  :ensure t)
+;; (use-package nm
+;;   :ensure t
+;;   )
 
 ;;; Attach files from dired
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
