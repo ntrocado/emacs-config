@@ -171,6 +171,10 @@
   :config
   (pdf-tools-install :no-query))
 
+;;; Lilypond
+(use-package lilypond-mode
+  :load-path "/usr/share/emacs/site-lisp/")
+
 (add-hook 'LilyPond-mode-hook
 	  #'(lambda ()
 	      (hack-local-variables)))
