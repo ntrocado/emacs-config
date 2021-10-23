@@ -12,8 +12,7 @@
 
 (mapc (lambda (x)
 	(add-to-list 'package-archives x))
-      (list '("melpa" . "https://melpa.org/packages/")
-	    '("org" . "https://orgmode.org/elpa/")))
+      (list '("melpa" . "https://melpa.org/packages/")))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -137,8 +136,6 @@
   :ensure t)
 
 (use-package org
-  :ensure org-plus-contrib
-  :pin org
   :custom (org-startup-indented t))
 
 (use-package org-roam
@@ -154,22 +151,20 @@
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today))
   :config
-  (org-roam-setup))
+  (org-roam-db-autosync-mode))
 
 (use-package org-ref
   :ensure t
-  :preface (setq org-ref-completion-library 'org-ref-ivy-cite)
-  :config
-  (setq org-ref-bibliography-notes (lab-path "notes.org")
-	org-ref-default-bibliography (list (lab-path "master.bib"))
-	org-ref-pdf-directory (lab-path "pdf/")))
+  :init
+  (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
+  (require 'org-ref-ivy))
 
 (use-package org-roam-bibtex
   :ensure t
   :after (org-roam org-ref ivy-bibtex)
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :bind (:map org-mode-map
-         (("C-c n a" . orb-note-actions))))
+         ("C-c n a" . orb-note-actions)))
 
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
