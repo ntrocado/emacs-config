@@ -110,31 +110,6 @@
   (ivy-rich-mode 1)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
-(use-package sly
-  :ensure t
-  :config (setq sly-autodoc-mode t
-		sly-lisp-implementations '((sbcl ("sbcl"))
-					   (ccl ("~/ccl-dev/ccl/lx86cl64")))))
-
-(use-package paredit
-  :ensure t
-  :config (enable-paredit-mode)
-  :hook ((emacs-lisp-mode
-	  eval-expression-minibuffer-setup
-	  lisp-mode
-	  lisp-interaction-mode
-	  scheme-mode
-	  sly-mrepl-mode)
-	 . enable-paredit-mode))
-
-(use-package company
-  :ensure t
-  :hook (after-init . global-company-mode)
-  :config (setq company-dabbrev-downcase nil))
-
-(use-package magit
-  :ensure t)
-
 (use-package org
   :custom (org-startup-indented t))
 
@@ -165,6 +140,31 @@
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :bind (:map org-mode-map
          ("C-c n a" . orb-note-actions)))
+
+(use-package sly
+  :ensure t
+  :config (setq sly-autodoc-mode t
+		sly-lisp-implementations '((sbcl ("sbcl"))
+					   (ccl ("~/ccl-dev/ccl/lx86cl64")))))
+
+(use-package paredit
+  :ensure t
+  :config (enable-paredit-mode)
+  :hook ((emacs-lisp-mode
+	  eval-expression-minibuffer-setup
+	  lisp-mode
+	  lisp-interaction-mode
+	  scheme-mode
+	  sly-mrepl-mode)
+	 . enable-paredit-mode))
+
+(use-package company
+  :ensure t
+  :hook (after-init . global-company-mode)
+  :config (setq company-dabbrev-downcase nil))
+
+(use-package magit
+  :ensure t)
 
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
