@@ -1,0 +1,415 @@
+;;; STRAIGHT
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+
+;;; USE-PACKAGE
+
+(straight-use-package 'use-package)
+
+
+;;; GENERAL DEFAULTS
+
+(prefer-coding-system 'utf-8)
+(tool-bar-mode 0)
+(show-paren-mode 1)
+(delete-selection-mode 1)
+(global-visual-line-mode t)
+(setq ring-bell-function 'ignore
+      column-number-mode t
+      mouse-wheel-scroll-amount '(1 ((shift) . 1))
+      mouse-wheel-progressive-speed nil
+      inhibit-startup-message t
+      sentence-end-double-space nil
+      enable-recursive-minibuffers t
+      recentf-max-saved-items 50)
+
+;;; BACKUPS
+
+(let ((backup-dir (concat user-emacs-directory "backups")))
+  (setq backup-directory-alist (list (cons ".*" backup-dir))
+	auto-save-file-name-transforms (list (list ".*" backup-dir t))))
+
+
+;;; GLOBAL KEY BINDINGS
+
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(global-set-key (kbd "<apps>") #'other-window)
+(global-set-key (kbd "<menu>") #'other-window)
+
+
+;;; Set default font and hide scroll-bar
+
+(defun my/setup-frame (&optional frame)
+  "Configure look of FRAME.
+If FRAME is nil, configure current frame. If non-nil, make FRAME
+current."
+  (when frame (select-frame frame))
+  (when (window-system)
+    ;;    (set-face-attribute 'default nil :height 125 :family "InputMono")
+    (set-face-attribute 'default nil :font "InputMono-10")
+    (set-face-attribute 'fixed-pitch nil :family "InputMono")
+    (set-face-attribute 'variable-pitch nil :family "InputSans")
+    (toggle-scroll-bar -1)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'my/setup-frame)
+  (my/setup-frame))
+
+(add-hook 'text-mode-hook
+               (lambda ()
+                (variable-pitch-mode 1)))
+
+
+;;; CUSTOM FILE
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+
+;;; PACKAGES
+
+(use-package ivy
+  :straight t)
+
+(use-package counsel
+  :straight t
+  :after ivy
+  :config
+  (defun ivy-call-number (n)
+    (interactive
+     (list (let* ((type (event-basic-type last-command-event))
+		  (char (if (characterp type)
+			    ;; Number on the main row.
+			    type
+			  ;; Keypad number, if bound directly.
+			  (car (last (string-to-list (symbol-name type))))))
+		  (n (- char ?0)))
+	     (if (zerop n) 10 n))))
+    (ivy-set-index (1- n))
+    (ivy--exhibit)
+    (ivy-done))
+  
+  (dotimes (i 10)
+    (define-key ivy-minibuffer-map (read-kbd-macro (format "M-%d" i)) 'ivy-call-number))
+  
+  (setq ivy-use-virtual-buffers t
+	ivy-count-format "(%d/%d) ")
+  (ivy-mode 1)
+  (counsel-mode 1))
+
+(use-package ivy-rich
+  :straight t
+  :after ivy
+  :init
+  (ivy-rich-mode 1)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
+
+(use-package async
+  :straight t
+  :config (dired-async-mode 1))
+
+(use-package sly
+  :straight t
+  :config
+  (setq sly-autodoc-mode t
+	sly-autodoc-use-multiline-p t
+	sly-lisp-implementations '((sbcl ("sbcl"))
+				   (ccl ("c:/Users/trocado/.roswell/impls/x86-64/windows/ccl-bin/1.12/wx86cl64.exe")))))
+
+(use-package paredit
+  :straight t
+  :config (enable-paredit-mode)
+  :hook ((emacs-lisp-mode
+	  eval-expression-minibuffer-setup
+	  lisp-mode
+	  lisp-interaction-mode
+	  scheme-mode
+	  sly-mrepl-mode)
+	 . enable-paredit-mode))
+
+
+(use-package company
+  :straight t
+  :hook (after-init . global-company-mode)
+  :config (setq company-dabbrev-downcase nil))
+
+(use-package magit
+  :straight t)
+
+(use-package circe
+  :straight t
+  :config
+  (setq circe-network-options
+      '(("irc.libera.chat"
+	 :port 7000
+         :tls t
+         :nick "trocado"
+         :sasl-username "trocado"
+         :sasl-password "yC59$rjAc^Dh"
+         :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
+				"#lispgames" "#supercollider" "#org-mode"
+				"#clschool" "#emacs-circe" "#lilypond"
+				"##running" "#org-roam")
+	 :reduce-lurker-spam t)))
+  (require 'circe-color-nicks)
+  (enable-circe-color-nicks)
+  (setq circe-color-nicks-everywhere t))
+
+
+;;; ORG
+
+(use-package org
+  :straight t
+  :custom
+  (org-startup-indented t)
+  (org-footnote-auto-adjust t)
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0)
+  (calendar-week-start-day 1)
+  :config
+  ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
+  (require 'ol-docview))
+
+;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
+;;                            (?B . (:foreground "yellow"))
+;;                            (?C . (:foreground "gray"))))
+
+
+;; Outlook
+(defun org-outlook-open (id)
+  "Open the Outlook item identified by ID.  ID should be an Outlook GUID."
+  (w32-shell-execute "open"
+		     "C:/Program Files/Microsoft Office/root/Office16/OUTLOOK.EXE"
+		     (concat "/select " "outlook:" id)))
+(org-link-set-parameters "outlook" :follow 'org-outlook-open)
+
+;;; ORG AGENDA
+
+(setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
+			 "c:/Users/trocado/OneDrive/Documents/tarefas.org"))
+(setq org-log-done 'time)
+(setq org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+         (timeline . "  % s")
+         (todo .
+               " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+         (tags .
+               " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+         (search . " %i %-12:c"))
+      )
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+(global-set-key (kbd "C-c C-d") 'org-deadline)
+
+;;; ORG LATEX EXPORT
+
+;; (setq org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "biber %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(setq org-latex-pdf-process (list
+   "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+
+(setq org-latex-listings 'listings)
+(setq org-latex-listings-options
+      '(("frame" "lines")
+        ("basicstyle" "\\ttfamily\\scriptsize")
+        ("numbers" "left")
+        ("numberstyle" "\\tiny")))
+
+(setq org-latex-prefer-user-labels t)
+
+(setq org-latex-classes
+      '(("article" "\\documentclass{scrartcl}"
+	 ("\\section{%s}" . "\\section*{%s}")
+	 ("\\subsection{%s}" . "\\subsection*{%s}")
+	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+	("report" "\\documentclass[11pt]{report}"
+	 ("\\part{%s}" . "\\part*{%s}")
+	 ("\\chapter{%s}" . "\\chapter*{%s}")
+	 ("\\section{%s}" . "\\section*{%s}")
+	 ("\\subsection{%s}" . "\\subsection*{%s}")
+	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+	("book" "\\documentclass[11pt]{book}"
+	 ("\\part{%s}" . "\\part*{%s}")
+	 ("\\chapter{%s}" . "\\chapter*{%s}")
+	 ("\\section{%s}" . "\\section*{%s}")
+	 ("\\subsection{%s}" . "\\subsection*{%s}")
+	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+
+;; (org-add-link-type
+;;  "latex" nil
+;;  (lambda (path desc format)
+;;    (cond
+;;     ((eq format 'html)
+;;      (format "<span class=\"%s\">%s</span>" path desc))
+;;     ((eq format 'latex)
+;;      (format "\\%s{%s}" path desc)))))
+
+;;; ORG BLOG EXPORT
+
+(setq org-html-htmlize-output-type 'css)
+
+(setq org-publish-project-alist
+      '(
+
+  ("org-trocado"
+          ;; Path to your org files.
+          :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+          :base-extension "org"
+
+          ;; Path to your Jekyll project.
+          :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+          :recursive t
+          :publishing-function org-html-publish-to-html
+          :headline-levels 4
+          :html-extension "html"
+          :body-only t ;; Only export section between <body> </body>
+	  )
+
+
+    ("org-static-trocado"
+          :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|svg"
+          :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+          :recursive t
+          :publishing-function org-publish-attachment)
+
+    ("blog" :components ("org-trocado" "org-static-trocado"))))
+
+(defun org-custom-link-img-follow (path)
+  (org-open-file-with-emacs
+   (format "../assets/%s" path)))
+
+(defun org-custom-link-img-export (path desc format)
+  (cond
+   ((eq format 'html)
+    (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc))))
+
+(org-add-link-type "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
+
+;;; ORG-REF and IVY-BIBTEX
+
+(defun generic-path (path)
+  (expand-file-name path (cond
+			  ((eql system-type 'windows-nt) "c:/")
+			  ((eql system-type 'gnu/linux) "/mnt/c/")))) ;wsl
+
+(defun lab-path (file)
+  (expand-file-name file (generic-path "Users/trocado/OneDrive/lab/")))
+
+(use-package ivy-bibtex
+  :straight t
+  :after ivy
+  :config
+  (setq bibtex-completion-bibliography (lab-path "master.bib")
+	bibtex-completion-library-path (lab-path "pdf/")
+	bibtex-completion-notes-path (lab-path "notes.org")
+	bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:15}"))
+	bibtex-completion-pdf-symbol "#"
+	bibtex-completion-notes-symbol "n")
+  
+  (setq bibtex-completion-pdf-open-function
+	(if (eq system-type 'windows-nt)
+	    (lambda (fpath)
+	      (w32-shell-execute "open" fpath))
+	  'org-open-file)))
+
+(use-package org-roam
+  :straight t
+  :init (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory (generic-path "Users/trocado/OneDrive/Roam"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  (org-roam-db-autosync-mode))
+
+(use-package org-ref
+  :straight t
+  :init
+  (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
+  (require 'org-ref-ivy))
+
+
+;;; SPELLING
+
+(setq ispell-program-name "hunspell")
+(setq flyspell-issue-message-flag nil)
+
+;;; Eww
+
+(setq shr-width 100)
+(setq shr-color-visible-luminance-min 90)
+
+;;; Cl-collider
+
+(defun slime-documentation-supercollider (ugen)
+  (interactive (list
+                (completing-read "Class: " (slime-supercollider-get-ugens-list))))
+  (browse-url (concat "http://doc.sccode.org/Classes/" ugen ".html")))
+
+(defvar slime-supercollider-ugens-list nil)
+
+(defun slime-supercollider-get-ugens-list ()
+  (if (null slime-supercollider-ugens-list)
+      (progn
+        (with-temp-file "c:\\Users\\trocado\\supercollider-get-ugens-list.scd"
+          (insert "\"-----\".postln;Object.allSubclasses.do(_.postcs);\"-----\".postln;0.exit;"))
+        (with-temp-buffer
+          (call-process-shell-command "\"c:\\Program Files\\SuperCollider-3.11.0\\sclang.exe\"" nil t nil "\"c:\\Users\\trocado\\supercollider-get-ugens-list.scd\"")
+          (goto-char (point-min))
+          (search-forward "\n-----\n")
+          (setf slime-supercollider-ugens-list
+                (sort (split-string (buffer-substring-no-properties (point) (- (save-excursion (search-forward "\n-----\n") (point)) 6)) "\n" t) #'string<))))
+    slime-supercollider-ugens-list))
+
+(defun sly-stop-sc ()
+  (interactive)
+  (sly-interactive-eval "(sc:stop)"))
+
+(defun sly-stop-patterns ()
+  (interactive)
+  (sly-interactive-eval "(cl-patterns:stop t)"))
+
+(add-hook 'sly-mode-hook 'my-sly-mode-hook)
+(defun my-sly-mode-hook ()
+  (define-key sly-mode-map (kbd "C-c C-d s") 'slime-documentation-supercollider)
+  (define-key sly-mode-map (kbd "C-.") 'sly-stop-sc)
+  (define-key sly-mode-map (kbd "C-,") 'sly-stop-patterns))
+
+;;; Ag
+
+(setq ag-executable "c:/Program Files/ag/ag.exe")
+
+;;; Multiple cursors
+
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;;; Dired
+
+(put 'dired-find-alternate-file 'disabled nil)
+
+;;; Notmuch
+
+(when (eql system-type 'gnu/linux)
+  (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
