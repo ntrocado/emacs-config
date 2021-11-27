@@ -51,12 +51,15 @@
 
 ;;; Set default font and hide scroll-bar
 
+(defun font-exists-p (font) "check if font exists"
+  (if (null (x-list-fonts font)) nil t))
+
 (defun my/setup-frame (&optional frame)
   "Configure look of FRAME.
 If FRAME is nil, configure current frame. If non-nil, make FRAME
 current."
   (when frame (select-frame frame))
-  (when (window-system)
+  (when (and window-system (font-exists-p "InputMono"))
     ;;    (set-face-attribute 'default nil :height 125 :family "InputMono")
     (set-face-attribute 'default nil :font "InputMono-10")
     (set-face-attribute 'fixed-pitch nil :family "InputMono")
