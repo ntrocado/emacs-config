@@ -185,7 +185,16 @@ current."
   (org-hide-emphasis-markers t)
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
-  (require 'ol-docview))
+  (require 'ol-docview)
+  :bind (:map org-mode-map
+	      ("<M-S-left>" . nil)
+	      ("<M-S-right>" . nil)
+	      ("<M-left>" . nil)
+	      ("<M-right>" . nil)
+	      ("<C-S-right>" . 'org-shiftmetaright)
+	      ("<C-S-left>" . 'org-shiftmetaleft)
+	      ("<C-right>" . 'org-metaright)
+	      ("<C-left>" . 'org-metaleft)))
 
 ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
 ;;                            (?B . (:foreground "yellow"))
