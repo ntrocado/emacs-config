@@ -355,6 +355,14 @@ current."
 
 (setq ispell-program-name "hunspell")
 (setq flyspell-issue-message-flag nil)
+(add-to-list 'ispell-dictionary-alist
+	     '("pt_PT"
+	       "[a-zA-Z\301\302\307\311\323\340\341\342\351\352\355\363\343\347\372]"
+	       "[^a-zA-Z\301\302\307\311\323\340\341\342\351\352\355\363\343\347\372]"
+	       "[']" t
+	       ("-d" "pt_PT-preao")
+	       "~latin1" iso-8859-1))
+(setq ispell-hunspell-dictionary-alist ispell-dictionary-alist)
 
 ;;; Eww
 
