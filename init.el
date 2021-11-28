@@ -127,10 +127,10 @@ current."
 (use-package sly
   :straight t
   :config
+  (load (expand-file-name "~/.roswell/helper.el"))
   (setq sly-autodoc-mode t
 	sly-autodoc-use-multiline-p t
-	sly-lisp-implementations '((sbcl ("sbcl"))
-				   (ccl ("c:/Users/trocado/.roswell/impls/x86-64/windows/ccl-bin/1.12/wx86cl64.exe")))))
+	inferior-lisp-program "ros -Q run"))
 
 (use-package paredit
   :straight t
@@ -182,6 +182,7 @@ current."
   (org-src-preserve-indentation t)
   (org-edit-src-content-indentation 0)
   (calendar-week-start-day 1)
+  (org-hide-emphasis-markers t)
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview))
@@ -189,7 +190,6 @@ current."
 ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
 ;;                            (?B . (:foreground "yellow"))
 ;;                            (?C . (:foreground "gray"))))
-
 
 ;; Outlook
 (defun org-outlook-open (id)
