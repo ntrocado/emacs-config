@@ -59,12 +59,14 @@
 If FRAME is nil, configure current frame. If non-nil, make FRAME
 current."
   (when frame (select-frame frame))
-  (when (and window-system (font-exists-p "InputMono"))
-    ;;    (set-face-attribute 'default nil :height 125 :family "InputMono")
-    (set-face-attribute 'default nil :font "InputMono-10")
-    (set-face-attribute 'fixed-pitch nil :family "InputMono")
-    (set-face-attribute 'variable-pitch nil :family "InputSans")
-    (toggle-scroll-bar -1)))
+  (when window-system
+    (cond ((font-exists-p "InputMono")
+	   (set-face-attribute 'default nil :font "InputMono-10")
+	   (set-face-attribute 'fixed-pitch nil :family "InputMono")
+	   (set-face-attribute 'variable-pitch nil :family "InputSans"))
+	  ((font-exists-p "Fira Sans")
+	   (set-face-attribute 'variable-pitch nil :font "Fira Sans"))))
+  (toggle-scroll-bar -1))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'my/setup-frame)
