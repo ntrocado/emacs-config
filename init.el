@@ -368,13 +368,16 @@ current."
 
 (setq ispell-program-name "hunspell")
 (setq flyspell-issue-message-flag nil)
-(add-to-list 'ispell-dictionary-alist
-	     '("pt_PT"
-	       "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	       "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	       "" t
-	       ("-d" "pt_PT-preao")
-	       nil utf-8))
+(setq ispell-dictionary-alist
+      '(("pt_PT"
+	 "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+	 "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+	 "" t
+	 ("-d" "pt_PT-preao")
+	 nil utf-8)
+	("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
+	 ("-d" "en_US-large")
+	 nil iso-8859-1)))
 (setq ispell-hunspell-dictionary-alist ispell-dictionary-alist)
 
 ;;; Eww
