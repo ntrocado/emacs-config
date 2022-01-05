@@ -124,6 +124,11 @@ current."
   (ivy-rich-mode 1)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
+(use-package amx
+  :straight t
+  :after ivy
+  :config (amx-mode 1))
+
 (use-package async
   :straight t
   :config (dired-async-mode 1))
