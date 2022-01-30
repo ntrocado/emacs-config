@@ -372,6 +372,7 @@ current."
   :straight t
   :init
   (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
+  (setq org-ref-default-citation-link "autocite")
   (require 'org-ref-ivy))
 
 
