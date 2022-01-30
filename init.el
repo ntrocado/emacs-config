@@ -122,6 +122,7 @@ current."
   :after ivy
   :init
   (ivy-rich-mode 1)
+  (setq ivy-rich-project-root-cache-mode t)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
 (use-package amx
