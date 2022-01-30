@@ -383,7 +383,11 @@ current."
 	 nil utf-8)
 	("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
 	 ("-d" "en_US-large")
-	 nil iso-8859-1)))
+	 nil iso-8859-1)
+	("la"
+	 "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
+	 ("-d" "la")
+	 nil utf-8)))
 (setq ispell-hunspell-dictionary-alist ispell-dictionary-alist)
 
 ;;; Eww
