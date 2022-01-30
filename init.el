@@ -340,7 +340,12 @@ current."
 	bibtex-completion-notes-path (lab-path "notes.org")
 	bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:15}"))
 	bibtex-completion-pdf-symbol "#"
-	bibtex-completion-notes-symbol "n")
+	bibtex-completion-notes-symbol "n"
+
+	bibtex-autokey-name-case-convert-function 'capitalize
+	bibtex-autokey-year-length 4
+	bibtex-autokey-name-year-separator "_"
+	bibtex-autokey-titlewords 0)
   
   (setq bibtex-completion-pdf-open-function
 	(if (eq system-type 'windows-nt)
