@@ -239,7 +239,7 @@ current."
 ;; (setq org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "biber %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 (setq org-latex-pdf-process (list
-   "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+   "latexmk -pdfxe -f %f"))
 
 (setq org-latex-listings 'listings)
 (setq org-latex-listings-options
