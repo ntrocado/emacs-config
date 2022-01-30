@@ -65,9 +65,9 @@ current."
 	   (set-face-attribute 'fixed-pitch nil :family "InputMono")
 	   (set-face-attribute 'variable-pitch nil :family "InputSans"))
 	  ((font-exists-p "Roboto")
-	   (set-face-attribute 'variable-pitch nil :font "Roboto"))
-	  ((font-exists-p "Roboto Mono")
-	   (set-face-attribute 'default  nil :family "Roboto Mono")))
+	   (set-face-attribute 'default nil :family "Roboto Mono")
+	   (set-face-attribute 'variable-pitch nil :font "Roboto")
+	   (set-face-attribute 'fixed-pitch nil :font "Roboto Mono-9")))
     (toggle-scroll-bar -1)))
 
 (if (daemonp)
