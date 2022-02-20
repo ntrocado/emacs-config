@@ -345,7 +345,9 @@ current."
 	bibtex-autokey-name-case-convert-function 'capitalize
 	bibtex-autokey-year-length 4
 	bibtex-autokey-name-year-separator "_"
-	bibtex-autokey-titlewords 0)
+	bibtex-autokey-titlewords 0
+
+	bibtex-dialect 'biblatex)
   
   (setq bibtex-completion-pdf-open-function
 	(if (eq system-type 'windows-nt)
