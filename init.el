@@ -453,6 +453,7 @@ current."
 ;;; Dired
 
 (put 'dired-find-alternate-file 'disabled nil)
+(setq dired-dwim-target t)
 
 ;;; Notmuch
 
