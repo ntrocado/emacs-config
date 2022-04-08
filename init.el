@@ -410,7 +410,8 @@ current."
 	 "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
 	 ("-d" "la")
 	 nil utf-8)))
-(setq ispell-hunspell-dictionary-alist ispell-dictionary-alist)
+(setq ispell-hunspell-dictionary-alist ispell-dictionary-alist
+      ispell-dictionary "en_US")
 
 ;;; Eww
 
