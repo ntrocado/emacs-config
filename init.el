@@ -181,6 +181,13 @@ current."
   (enable-circe-color-nicks)
   (setq circe-color-nicks-everywhere t))
 
+(use-package powerthesaurus
+  :straight t
+  :config
+  ;; https://github.com/SavchenkoValeriy/emacs-powerthesaurus/issues/16
+  (setq powerthesaurus-request-headers
+	(delete '("Accept-Encoding" . "gzip, deflate, br")
+		powerthesaurus-request-headers)))
 
 ;;; ORG
 
