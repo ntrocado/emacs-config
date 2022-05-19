@@ -364,7 +364,7 @@ current."
 
 (use-package org-roam
   :straight t
-  :init (setq org-roam-v2-ack t)
+  :preface (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory (generic-path "Users/trocado/OneDrive/Roam"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -455,6 +455,19 @@ current."
   (interactive)
   (sly-interactive-eval "(cl-patterns:stop t)"))
 
+(defun cl-patterns-helpers-load ()
+  (interactive)
+  (sly-eval-async '(cl:namestring (asdf:system-source-directory (asdf:find-system 'cl-patterns)))
+    (lambda (path)
+      (load (concat path "res/emacs/cl-patterns-helpers") nil nil nil t)
+      (load (concat path "res/emacs/cl-patterns-skeletons") nil nil nil t)))
+  (define-key sly-mode-map (kbd "C-c p") 'cl-patterns-play-or-end-context-or-select-pdef)
+  (define-key sly-mode-map (kbd "C-c P") 'cl-patterns-play-or-stop-context-or-select-pdef)
+  (define-key sly-mode-map (kbd "C-c s") 'cl-patterns-stop-all)
+  (define-key sly-doc-map (kbd "s") 'cl-patterns-supercollider-documentation))
+
+(add-hook 'sly-connected-hook 'cl-patterns-helpers-load)
+
 (add-hook 'sly-mode-hook 'my-sly-mode-hook)
 (defun my-sly-mode-hook ()
   (define-key sly-mode-map (kbd "C-c C-d s") 'slime-documentation-supercollider)
@@ -481,3 +494,10 @@ current."
 
 (when (eql system-type 'gnu/linux)
   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
+
+;;; Lilypond
+(push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
+      load-path)
+(setq LilyPond-lilypond-command "\"c:\\Program Files (x86)\\LilyPond\\usr\\bin\\lilypond.exe\"")
+
+
