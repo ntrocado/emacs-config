@@ -402,7 +402,6 @@ current."
 ;;; SPELLING
 
 (setq ispell-program-name "hunspell")
-(setq flyspell-issue-message-flag nil)
 (setq ispell-dictionary-alist
       '(("pt_PT"
 	 "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
@@ -419,6 +418,9 @@ current."
 	 nil utf-8)))
 (setq ispell-hunspell-dictionary-alist ispell-dictionary-alist
       ispell-dictionary "en_US")
+
+(setq flyspell-issue-message-flag nil)
+(add-hook 'text-mode-hook 'turn-on-flyspell)
 
 ;;; Eww
 
