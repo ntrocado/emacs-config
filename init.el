@@ -189,6 +189,9 @@ current."
 	(delete '("Accept-Encoding" . "gzip, deflate, br")
 		powerthesaurus-request-headers)))
 
+(use-package pt
+  :straight t)
+
 ;;; ORG
 
 (use-package org
