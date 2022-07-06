@@ -203,6 +203,7 @@ current."
   (org-edit-src-content-indentation 0)
   (calendar-week-start-day 1)
   (org-hide-emphasis-markers t)
+  (org-list-allow-alphabetical t)
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
