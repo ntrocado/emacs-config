@@ -175,7 +175,7 @@ current."
          :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
 				"#lispgames" "#supercollider" "#org-mode"
 				"#clschool" "#emacs-circe" "#lilypond"
-				"##running" "#org-roam")
+				"##running" "#org-roam" "##latin" "##latinitas")
 	 :reduce-lurker-spam t)))
   (require 'circe-color-nicks)
   (enable-circe-color-nicks)
