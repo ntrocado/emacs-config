@@ -164,14 +164,30 @@ current."
 
 (use-package circe
   :straight t
+  :init
+  (defun my-fetch-password (&rest params)
+    (require 'auth-source)
+    (let ((match (car (apply 'auth-source-search params))))
+      (if match
+          (let ((secret (plist-get match :secret)))
+            (if (functionp secret)
+		(funcall secret)
+              secret))
+	(error "Password not found for %S" params))))
+
+  (defun my-nickserv-password (server)
+    (my-fetch-password :user "trocado" :machine "irc.libera.chat"))
+  
   :config
   (setq circe-network-options
       '(("irc.libera.chat"
 	 :port 7000
-         :tls t
+         :use-tls t
          :nick "trocado"
-         :sasl-username "trocado"
-         :sasl-password "yC59$rjAc^Dh"
+	 :user "trocado"
+	 :realname "trocado"
+	 :sasl-username "trocado"
+	 :sasl-password my-nickserv-password
          :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
 				"#lispgames" "#supercollider" "#org-mode"
 				"#clschool" "#emacs-circe" "#lilypond"
