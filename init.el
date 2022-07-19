@@ -297,6 +297,8 @@ current."
 	 ("\\subsection{%s}" . "\\subsection*{%s}")
 	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 
+(setq org-export-with-smart-quotes t)
+
 ;; (org-add-link-type
 ;;  "latex" nil
 ;;  (lambda (path desc format)
