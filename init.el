@@ -130,6 +130,15 @@ current."
   :after ivy
   :config (amx-mode 1))
 
+(use-package dired
+  :ensure nil
+  :custom (dired-listing-switches "-agho")
+  :config
+  (put 'dired-find-alternate-file 'disabled nil)
+  (setq ls-lisp-use-insert-directory-program t
+	dired-dwim-target t
+	delete-by-moving-to-trash t))
+
 (use-package async
   :straight t
   :config (dired-async-mode 1))
@@ -508,11 +517,6 @@ current."
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-
-;;; Dired
-
-(put 'dired-find-alternate-file 'disabled nil)
-(setq dired-dwim-target t)
 
 ;;; Notmuch
 
