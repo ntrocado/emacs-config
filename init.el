@@ -378,6 +378,7 @@ current."
 	bibtex-completion-notes-path (lab-path "notes.org")
 	bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:15}"))
 	bibtex-completion-pdf-symbol "#"
+	bibtex-completion-pdf-extension '(".pdf" ".djvu" ".epub")
 	bibtex-completion-notes-symbol "n"
 
 	bibtex-autokey-name-case-convert-function 'capitalize
