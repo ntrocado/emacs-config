@@ -88,12 +88,19 @@ current."
 
 ;;; PACKAGES
 
+(use-package diminish
+  :straight t
+  :config
+  (mapcar #'diminish '(eldoc-mode visual-line-mode)))
+
 (use-package ivy
-  :straight t)
+  :straight t
+  :diminish ivy-mode)
 
 (use-package counsel
   :straight t
   :after ivy
+  :diminish counsel-mode
   :config
   (defun ivy-call-number (n)
     (interactive
@@ -153,6 +160,7 @@ current."
 
 (use-package paredit
   :straight t
+  :diminish paredit-mode
   :config (enable-paredit-mode)
   :hook ((emacs-lisp-mode
 	  eval-expression-minibuffer-setup
@@ -165,6 +173,7 @@ current."
 
 (use-package company
   :straight t
+  :diminish company-mode
   :hook (after-init . global-company-mode)
   :config (setq company-dabbrev-downcase nil))
 
