@@ -195,6 +195,11 @@ current."
   :hook (after-init . global-company-mode)
   :config (setq company-dabbrev-downcase nil))
 
+(use-package company-posframe
+  :straight t
+  :after company
+  :config (company-posframe-mode 1))
+
 (use-package magit
   :straight t)
 
