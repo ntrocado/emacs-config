@@ -198,6 +198,7 @@ current."
 (use-package company-posframe
   :straight t
   :after company
+  :diminish company-posframe-mode
   :config (company-posframe-mode 1))
 
 (use-package magit
