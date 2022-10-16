@@ -467,7 +467,21 @@ current."
   :init
   (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
   (setq org-ref-default-citation-link "autocite")
-  (require 'org-ref-ivy))
+  (require 'org-ref-ivy)
+  :config
+  ;; Count references: https://github.com/jkitchin/org-ref/issues/1034
+  (defun my/count-refs ()
+    (let* ((cites (org-element-map (org-element-parse-buffer) 'link
+		    (lambda (lnk)
+		      (when (member (org-element-property :type lnk) (mapcar 'car org-ref-cite-types))
+			(cl-loop for ref in (plist-get (org-ref-parse-cite-path
+							(org-element-property :path lnk))
+						       :references)
+				 collect
+				 (plist-get ref :key))))))
+	   (all-cites (-flatten cites))
+	   (uniq-cites (-uniq all-cites)))
+      (cl-loop for cite in uniq-cites collect (cons cite (cl-count cite all-cites :test 'string=))))))
 
 
 ;;; SPELLING
