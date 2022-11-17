@@ -434,7 +434,8 @@ current."
 	  'org-open-file)))
 
 (use-package org-roam
-  :straight t
+  :straight (:host github :repo "org-roam/org-roam" :branch "main"
+             :files (:defaults "extensions/*"))
   :preface (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory (generic-path "Users/trocado/OneDrive/Roam"))
