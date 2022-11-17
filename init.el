@@ -578,6 +578,24 @@ current."
 (when (eql system-type 'gnu/linux)
   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
 
+;;; Gnus
+
+(use-package gnus
+  :config
+  (setq user-full-name "Nuno Trocado"
+	user-mail-address "ntrocado@gmail.com"
+	send-mail-function 'smtpmail-send-it
+	smtpmail-smtp-server "smtp.gmail.com"
+	smtpmail-stream-type 'starttls
+	smtpmail-smtp-service 587
+	gnus-select-method
+	'(nnimap "gmail"
+		 (nnimap-address "imap.gmail.com")
+		 (nnimap-server-port 993)
+		 (nnimap-stream ssl)
+		 (nnmail-expiry-wait immediate))
+	gnus-summary-line-format "%U%R%z%I%d %(%[%4L: %-23,23f%]%) %s\\n"))
+
 ;;; Lilypond
 (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
       load-path)
