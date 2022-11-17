@@ -174,7 +174,7 @@ current."
   (load (expand-file-name "~/.roswell/helper.el"))
   (setq sly-autodoc-mode t
 	sly-autodoc-use-multiline-p t
-	inferior-lisp-program "ros -Q run"))
+	inferior-lisp-program "ros dynamic-space-size=3000 -Q run"))
 
 (use-package paredit
   :straight t
