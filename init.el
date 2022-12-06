@@ -415,7 +415,7 @@ current."
   (setq bibtex-completion-bibliography (lab-path "master.bib")
 	bibtex-completion-library-path (lab-path "pdf/")
 	bibtex-completion-notes-path (lab-path "notes.org")
-	bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:15}"))
+	bibtex-completion-display-formats '((t . "${author:18} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:7}"))
 	bibtex-completion-pdf-symbol "#"
 	bibtex-completion-pdf-extension '(".pdf" ".djvu" ".epub")
 	bibtex-completion-notes-symbol "n"
@@ -435,7 +435,8 @@ current."
 
 (use-package org-roam
   :straight (:host github :repo "org-roam/org-roam" :branch "main"
-             :files (:defaults "extensions/*"))
+		   :files (:defaults "extensions/*"))
+  :after org
   :preface (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory (generic-path "Users/trocado/OneDrive/Roam"))
@@ -465,6 +466,7 @@ current."
 
 (use-package org-ref
   :straight t
+  :after org
   :init
   (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
   (setq org-ref-default-citation-link "autocite")
