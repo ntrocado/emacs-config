@@ -415,6 +415,7 @@ current."
   (setq bibtex-completion-bibliography (lab-path "master.bib")
 	bibtex-completion-library-path (lab-path "pdf/")
 	bibtex-completion-notes-path (lab-path "notes.org")
+	bibtex-completion-additional-search-fields '(keywords)
 	bibtex-completion-display-formats '((t . "${author:18} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7} ${keywords:7}"))
 	bibtex-completion-pdf-symbol "#"
 	bibtex-completion-pdf-extension '(".pdf" ".djvu" ".epub")
