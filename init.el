@@ -286,15 +286,16 @@ current."
 	org-agenda-skip-scheduled-if-deadline-is-shown t
 	org-deadline-warning-days 90)
 
-  :bind (:map org-mode-map
-	      ("<M-S-left>" . nil)
-	      ("<M-S-right>" . nil)
-	      ("<M-left>" . nil)
-	      ("<M-right>" . nil)
-	      ("<C-S-right>" . 'org-shiftmetaright)
-	      ("<C-S-left>" . 'org-shiftmetaleft)
-	      ("<C-right>" . 'org-metaright)
-	      ("<C-left>" . 'org-metaleft)))
+  :bind (("C-c a" . org-agenda)
+	 :map org-mode-map
+	 ("<M-S-left>" . nil)
+	 ("<M-S-right>" . nil)
+	 ("<M-left>" . nil)
+	 ("<M-right>" . nil)
+	 ("<C-S-right>" . 'org-shiftmetaright)
+	 ("<C-S-left>" . 'org-shiftmetaleft)
+	 ("<C-right>" . 'org-metaright)
+	 ("<C-left>" . 'org-metaleft)))
 
 ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
 ;;                            (?B . (:foreground "yellow"))
