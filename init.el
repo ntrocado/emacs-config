@@ -285,14 +285,6 @@ current."
 ;;                            (?B . (:foreground "yellow"))
 ;;                            (?C . (:foreground "gray"))))
 
-;; Outlook
-(defun org-outlook-open (id)
-  "Open the Outlook item identified by ID.  ID should be an Outlook GUID."
-  (w32-shell-execute "open"
-		     "C:/Program Files/Microsoft Office/root/Office16/OUTLOOK.EXE"
-		     (concat "/select " "outlook:" id)))
-(org-link-set-parameters "outlook" :follow 'org-outlook-open)
-
 ;;; ORG AGENDA
 
 (setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
