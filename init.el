@@ -271,6 +271,20 @@ current."
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
+
+  ;; agenda
+  (setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
+			   "c:/Users/trocado/OneDrive/Documents/tarefas.org")
+	org-log-done 'time
+	org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+				   (timeline . "  % s")
+				   (todo .
+					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+				   (tags .
+					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+				   (search . " %i %-12:c"))	
+	org-agenda-skip-scheduled-if-deadline-is-shown t)
+
   :bind (:map org-mode-map
 	      ("<M-S-left>" . nil)
 	      ("<M-S-right>" . nil)
@@ -284,22 +298,6 @@ current."
 ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
 ;;                            (?B . (:foreground "yellow"))
 ;;                            (?C . (:foreground "gray"))))
-
-;;; ORG AGENDA
-
-(setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
-			 "c:/Users/trocado/OneDrive/Documents/tarefas.org"))
-(setq org-log-done 'time)
-(setq org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
-         (timeline . "  % s")
-         (todo .
-               " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
-         (tags .
-               " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
-         (search . " %i %-12:c"))
-      )
-(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-(global-set-key (kbd "C-c C-d") 'org-deadline)
 
 ;;; ORG LATEX EXPORT
 
