@@ -283,7 +283,8 @@ current."
 				   (tags .
 					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
 				   (search . " %i %-12:c"))	
-	org-agenda-skip-scheduled-if-deadline-is-shown t)
+	org-agenda-skip-scheduled-if-deadline-is-shown t
+	org-deadline-warning-days 90)
 
   :bind (:map org-mode-map
 	      ("<M-S-left>" . nil)
