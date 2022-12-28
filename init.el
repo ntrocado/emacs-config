@@ -88,6 +88,16 @@ current."
   (load custom-file))
 
 
+;;; CONVENIENCE FUNCTIONS
+
+(defun my/remove-newlines-and-hyphens (begin end)
+  (interactive "r")
+  (let ((text (buffer-substring-no-properties begin end)))
+    (kill-region begin end)
+    (insert
+     (replace-regexp-in-string "\n" " "
+			       (replace-regexp-in-string "-\n" "" text)))))
+
 ;;; PACKAGES
 
 (use-package emacs
@@ -388,7 +398,7 @@ current."
    ((eq format 'html)
     (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc))))
 
-(org-add-link-type "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
+;; (org-link-set-parameters "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
 
 ;;; ORG-REF and IVY-BIBTEX
 
