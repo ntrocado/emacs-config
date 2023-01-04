@@ -434,7 +434,15 @@ current."
 	(if (eq system-type 'windows-nt)
 	    (lambda (fpath)
 	      (w32-shell-execute "open" fpath))
-	  'org-open-file)))
+	  'org-open-file))
+
+  (defun my/sci-hub ()
+    "Opens a browser for Sci-hub with the bibtex entry at point."
+    (interactive)
+    (browse-url (concat "https://sci-hub.se/"
+			(replace-regexp-in-string
+			 "https?://\\(dx.\\)?.doi.org/" ""
+			 (bibtex-autokey-get-field "doi"))))))
 
 (use-package org-roam
   :straight (:host github :repo "org-roam/org-roam" :branch "main"
