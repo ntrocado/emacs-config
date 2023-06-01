@@ -617,8 +617,8 @@ current."
 		 (nnmail-expiry-wait-function
 		  (lambda (group)
 		    (if (string-match-p "INBOX" group)
-			immediate
-		      never))))
+			'immediate
+		      'never))))
 	gnus-summary-line-format "%U%R%z%I%d %(%[%4L: %-23,23f%]%) %s\\n"))
 
 ;;; Send e-mail without inserting newlines
