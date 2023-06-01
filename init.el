@@ -631,8 +631,13 @@ current."
 ;;; Contacts
 (use-package bbdb
   :straight t
+  :ensure t
   :config
-  (bbdb-initialize 'message 'gnus))
+  (bbdb-initialize 'message 'gnus)
+  (bbdb-mua-auto-update-init 'message 'gnus)
+  (setf bbdb-mua-action 'create
+	bbdb-mua-pop-up nil
+	bbdb-message-all-addresses t))
 
 
 ;;; Lilypond
