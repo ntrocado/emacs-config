@@ -623,3 +623,7 @@ current."
 (setq LilyPond-lilypond-command "\"c:\\Program Files (x86)\\LilyPond\\usr\\bin\\lilypond.exe\"")
 
 
+;;; PDF-Tools
+(use-package pdf-tools
+  :straight t
+  :config (pdf-tools-install))
