@@ -170,7 +170,7 @@ current."
   :custom (dired-listing-switches "-agho")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
-  (setq ls-lisp-use-insert-directory-program t
+  (setq ls-lisp-use-insert-directory-program nil
 	dired-dwim-target t
 	delete-by-moving-to-trash t))
 
