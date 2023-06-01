@@ -614,8 +614,26 @@ current."
 		 (nnimap-address "imap.gmail.com")
 		 (nnimap-server-port 993)
 		 (nnimap-stream ssl)
-		 (nnmail-expiry-wait immediate))
+		 (nnmail-expiry-wait-function
+		  (lambda (group)
+		    (if (string-match-p "INBOX" group)
+			'immediate
+		      'never))))
 	gnus-summary-line-format "%U%R%z%I%d %(%[%4L: %-23,23f%]%) %s\\n"))
+
+;;; Send e-mail without inserting newlines
+(use-package message
+  :hook (message-mode . (lambda ()
+			  (turn-off-auto-fill)
+			  (visual-line-mode)
+			  (setq mml-enable-flowed nil))))
+
+;;; Contacts
+(use-package bbdb
+  :straight t
+  :config
+  (bbdb-initialize 'message 'gnus))
+
 
 ;;; Lilypond
 (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
