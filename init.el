@@ -637,7 +637,8 @@ current."
   (bbdb-mua-auto-update-init 'message 'gnus)
   (setf bbdb-mua-action 'create
 	bbdb-mua-pop-up nil
-	bbdb-message-all-addresses t))
+	bbdb-message-all-addresses t
+	bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
 
 
 ;;; Lilypond
