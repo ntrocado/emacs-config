@@ -621,7 +621,8 @@ current."
 		      'never))))
 	gnus-large-newsgroup 1000
 	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
-	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"))
+	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
+	gnus-always-read-dribble-file t))
 
 ;;; Send e-mail without inserting newlines
 (use-package message
