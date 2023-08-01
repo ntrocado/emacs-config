@@ -107,10 +107,10 @@ current."
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only no-extend)
 	modus-themes-headings
-	'((1 . (rainbow overline background 1.4))
-          (2 . (rainbow background 1.3))
-          (3 . (rainbow bold 1.2))
-          (t . (regular 1.1))))
+	'((1 . (rainbow overline background 1.1))
+          (2 . (rainbow background 1))
+          (3 . (rainbow bold 1))
+          (t . (regular 1))))
   :config
   ;; Load the theme of your choice:
   (load-theme 'modus-operandi) ;; OR (load-theme 'modus-vivendi)
