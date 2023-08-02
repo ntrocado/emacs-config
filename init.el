@@ -203,7 +203,8 @@ current."
   :straight t
   :diminish company-mode
   :hook (after-init . global-company-mode)
-  :config (setq company-dabbrev-downcase nil))
+  :config (setq company-dabbrev-downcase nil
+		company-show-quick-access t)
 
 (use-package company-posframe
   :straight t
