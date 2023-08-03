@@ -189,25 +189,26 @@ current."
 (use-package paredit
   :straight t
   :diminish paredit-mode
-  :config (enable-paredit-mode)
   :hook ((emacs-lisp-mode
 	  eval-expression-minibuffer-setup
 	  lisp-mode
 	  lisp-interaction-mode
-	  scheme-mode
-	  sly-mrepl-mode)
-	 . enable-paredit-mode))
-
+	  scheme-mode)
+	 . enable-paredit-mode)
+  :hook (sly-mrepl-mode . (lambda ()
+			    (let ((oldmap (cdr (assoc 'paredit-mode minor-mode-map-alist)))
+				  (newmap (make-sparse-keymap)))
+			      (set-keymap-parent newmap oldmap)
+			      (define-key newmap ["RET"] nil)
+			      (make-local-variable 'minor-mode-overriding-map-alist)
+			      (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
 
 (use-package company
   :straight t
   :diminish company-mode
   :hook (after-init . global-company-mode)
   :config (setq company-dabbrev-downcase nil
-		company-show-quick-access t)
-  :bind (:map company-active-map
-	      ("<return>" . nil)
-	      ("<tab>" . #'company-complete)))
+		company-show-quick-access t))
 
 (use-package company-posframe
   :straight t
