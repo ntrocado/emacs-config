@@ -208,10 +208,7 @@ current."
   :diminish company-mode
   :hook (after-init . global-company-mode)
   :config (setq company-dabbrev-downcase nil
-		company-show-quick-access t)
-  :bind (:map company-active-map
-	      ("<return>" . nil)
-	      ("<tab>" . #'company-complete)))
+		company-show-quick-access t))
 
 (use-package company-posframe
   :straight t
