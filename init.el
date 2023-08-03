@@ -619,6 +619,7 @@ current."
 		 (nnimap-address "imap.gmail.com")
 		 (nnimap-server-port 993)
 		 (nnimap-stream ssl)
+		 (nnir-search-engine imap)
 		 (nnmail-expiry-wait-function
 		  (lambda (group)
 		    (if (string-match-p "INBOX" group)
@@ -627,7 +628,9 @@ current."
 	gnus-large-newsgroup 1000
 	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
 	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
-	gnus-always-read-dribble-file t))
+	gnus-always-read-dribble-file t)
+  (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
+  (setq nnir-imap-default-search-key "gmail"))
 
 ;;; Send e-mail without inserting newlines
 (use-package message
