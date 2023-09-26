@@ -287,6 +287,8 @@ current."
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
 
+  (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
+
   ;; agenda
   (setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
 			   "c:/Users/trocado/OneDrive/Documents/tarefas.org")
