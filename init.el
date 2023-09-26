@@ -427,6 +427,7 @@ current."
 (use-package ivy-bibtex
   :straight t
   :after ivy
+  :bind ("<f12>" . ivy-bibtex)
   :config
   (setq bibtex-completion-bibliography (lab-path "master.bib")
 	bibtex-completion-library-path (lab-path "pdf/")
