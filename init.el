@@ -272,6 +272,11 @@ current."
 (use-package pt
   :straight t)
 
+(use-package golden-ratio
+  :straight t
+  :config (golden-ratio-mode))
+
+
 ;;; ORG
 
 (use-package org
