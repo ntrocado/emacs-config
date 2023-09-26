@@ -121,6 +121,13 @@ current."
   :config
   (mapcar #'diminish '(eldoc-mode visual-line-mode)))
 
+(use-package abbrev-mode
+  :init
+  (setq-default abbrev-mode t)
+  :config
+  (read-abbrev-file (expand-file-name "abbrev_defs" user-emacs-directory))
+  (setq save-abbrevs 'silently))
+
 (use-package ivy
   :straight t
   :diminish ivy-mode)
