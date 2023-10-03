@@ -663,3 +663,7 @@ current."
 (use-package pdf-tools
   :straight t
   :config (pdf-tools-install))
+
+;;; Epub
+(use-package nov
+  :straight t)
