@@ -427,7 +427,7 @@ current."
 			  ((eql system-type 'gnu/linux) "/mnt/c/")))) ;wsl
 
 (defun lab-path (file)
-  (expand-file-name file (generic-path "Users/trocado/OneDrive/lab/")))
+  (expand-file-name file "~/OneDrive/lab/"))
 
 (use-package ivy-bibtex
   :straight t
