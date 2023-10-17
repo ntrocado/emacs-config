@@ -527,27 +527,42 @@ current."
 
 
 ;;; SPELLING
+(use-package ispell
+  :config
+  (setq ispell-program-name "hunspell"
+	ispell-dictionary-alist
+	'(("pt_PT"
+	   "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+	   "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+	   "" t
+	   ("-d" "pt_PT-preao")
+	   nil utf-8)
+	  ("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
+	   ("-d" "en_US-large")
+	   nil iso-8859-1)
+	  ("la"
+	   "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
+	   ("-d" "la")
+	   nil utf-8))
+	ispell-hunspell-dictionary-alist ispell-dictionary-alist
+	ispell-dictionary "en_US")
 
-(setq ispell-program-name "hunspell")
-(setq ispell-dictionary-alist
-      '(("pt_PT"
-	 "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	 "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	 "" t
-	 ("-d" "pt_PT-preao")
-	 nil utf-8)
-	("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
-	 ("-d" "en_US-large")
-	 nil iso-8859-1)
-	("la"
-	 "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
-	 ("-d" "la")
-	 nil utf-8)))
-(setq ispell-hunspell-dictionary-alist ispell-dictionary-alist
-      ispell-dictionary "en_US")
+  (defun my/switch-dictionary ()
+    (interactive)
+    (if (string= ispell-current-dictionary "en_US")
+	(progn (abbrev-mode 0)
+	       (ispell-change-dictionary "pt_PT"))
+      (progn (abbrev-mode 1)
+	     (ispell-change-dictionary "en_US"))))
 
-(setq flyspell-issue-message-flag nil)
-(add-hook 'text-mode-hook 'turn-on-flyspell)
+  :bind
+  ("<f8>" . my/switch-dictionary))
+
+(use-package flyspell
+  :config 
+  (setq flyspell-issue-message-flag nil)
+  :hook 
+  (text-mode . turn-on-flyspell))
 
 ;;; Eww
 
