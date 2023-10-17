@@ -61,15 +61,16 @@ current."
   (when frame (select-frame frame))
   (when window-system
     (cond ((font-exists-p "InputMono")
-	   (set-face-attribute 'default nil :font "InputMono-10")
-	   (set-face-attribute 'fixed-pitch nil :family "InputMono")
-	   (set-face-attribute 'variable-pitch nil :family "InputSans"))
+	   (set-face-attribute 'default nil :font "InputMono-11")
+	   (set-face-attribute 'fixed-pitch nil :family "InputMono"))
 	  ((font-exists-p "Roboto")
 	   (set-face-attribute 'default nil :family "Roboto Mono")
 	   (set-face-attribute 'variable-pitch nil :font "Roboto")
-	   (set-face-attribute 'fixed-pitch nil :font "Roboto Mono-9")))
-    (when (font-exists-p "-*-Source Sans 3-*")
-      (set-face-attribute 'variable-pitch nil :font "-outline-Source Sans 3-normal-normal-normal-sans-32-*-*-*-p-*-iso10646-1"))
+	   (set-face-attribute 'fixed-pitch nil :font "Roboto")))
+    (cond ((font-exists-p "-*-Source Sans 3-*")
+	   (set-face-attribute 'variable-pitch nil :font "-outline-Source Sans 3-normal-normal-normal-sans-32-*-*-*-p-*-iso10646-1"))
+	  ((font-exists-p "Noto Sans")
+	   (set-face-attribute 'variable-pitch nil :family "Noto Sans")))
     (toggle-scroll-bar -1)))
 
 (if (daemonp)
@@ -240,7 +241,7 @@ current."
 	(error "Password not found for %S" params))))
 
   (defun my-nickserv-password (server)
-    (my-fetch-password :user "trocado" :machine "irc.libera.chat"))
+    (my-fetch-password :login "trocado" :machine "irc.libera.chat"))
   
   :config
   (setq circe-network-options
@@ -423,8 +424,8 @@ current."
 
 (defun generic-path (path)
   (expand-file-name path (cond
-			  ((eql system-type 'windows-nt) "c:/")
-			  ((eql system-type 'gnu/linux) "/mnt/c/")))) ;wsl
+			  ((eql system-type 'windows-nt) "c:/Users/trocado/")
+			  ((eql system-type 'gnu/linux) "~/")))) ;wsl
 
 (defun lab-path (file)
   (expand-file-name file "~/OneDrive/lab/"))
@@ -470,7 +471,7 @@ current."
   :after org
   :preface (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory (generic-path "Users/trocado/OneDrive/Roam"))
+  (org-roam-directory (generic-path "OneDrive/Roam"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -631,8 +632,8 @@ current."
 
 ;;; Notmuch
 
-(when (eql system-type 'gnu/linux)
-  (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
+;; (when (eql system-type 'gnu/linux)
+;;   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
 
 ;;; Gnus
 
@@ -649,7 +650,7 @@ current."
 		 (nnimap-address "imap.gmail.com")
 		 (nnimap-server-port 993)
 		 (nnimap-stream ssl)
-		 (nnir-search-engine imap)
+		 ;; (nnir-search-engine imap)
 		 (nnmail-expiry-wait-function
 		  (lambda (group)
 		    (if (string-match-p "INBOX" group)
@@ -658,9 +659,9 @@ current."
 	gnus-large-newsgroup 1000
 	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
 	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
-	gnus-always-read-dribble-file t)
-  (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
-  (setq nnir-imap-default-search-key "gmail"))
+	gnus-always-read-dribble-file t))
+  ;; (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
+  ;; (setq nnir-imap-default-search-key "gmail"))
 
 ;;; Send e-mail without inserting newlines
 (use-package message
@@ -692,3 +693,7 @@ current."
 (use-package pdf-tools
   :straight t
   :config (pdf-tools-install))
+
+;;; Epub
+(use-package nov
+  :straight t)
