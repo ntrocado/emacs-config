@@ -539,7 +539,7 @@ current."
 	   ("-d" "pt_PT-preao")
 	   nil utf-8)
 	  ("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
-	   ("-d" "en_US-large")
+	   ("-d" "en_US")
 	   nil iso-8859-1)
 	  ("la"
 	   "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
