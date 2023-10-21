@@ -303,8 +303,8 @@ current."
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
 
   ;; agenda
-  (setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
-			   "c:/Users/trocado/OneDrive/Documents/tarefas.org")
+  (setq org-agenda-files '("~/OneDrive/Escritorio/notas.org"
+			   "~/OneDrive/Documents/tarefas.org")
 	org-log-done 'time
 	org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
 				   (timeline . "  % s")
