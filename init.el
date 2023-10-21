@@ -122,7 +122,7 @@ current."
   :config
   (mapcar #'diminish '(eldoc-mode visual-line-mode)))
 
-(use-package abbrev-mode
+(use-package abbrev
   :init
   (setq-default abbrev-mode t)
   :config
