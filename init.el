@@ -303,16 +303,19 @@ current."
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
 
   ;; agenda
+  (defun %heading-format ()
+    (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
+  
   (setq org-agenda-files '("~/OneDrive/Escritorio/notas.org"
 			   "~/OneDrive/Documents/tarefas.org")
 	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
 				   (timeline . "  % s")
 				   (todo .
-					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+					 " %i %-12:c %(%heading-format)")
 				   (tags .
-					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
-				   (search . " %i %-12:c"))	
+					 " %i %-12:c %(%heading-format)")
+				   (search . " %i %-12:c"))
 	org-agenda-skip-scheduled-if-deadline-is-shown t
 	org-deadline-warning-days 90)
 
