@@ -306,10 +306,10 @@ current."
   (setq org-agenda-files '("c:/Users/trocado/OneDrive/Escritorio/notas.org"
 			   "c:/Users/trocado/OneDrive/Documents/tarefas.org")
 	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+	org-agenda-prefix-format '((agenda . " %i %s %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ] \") ")
 				   (timeline . "  % s")
 				   (todo .
-					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
+					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ] \") ")
 				   (tags .
 					 " %i %-12:c %(concat \"[ \"(org-format-outline-path (org-get-outline-path)) \" ]\") ")
 				   (search . " %i %-12:c"))	
