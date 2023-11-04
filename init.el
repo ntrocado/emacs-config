@@ -144,6 +144,11 @@ current."
   (load-theme 'modus-operandi) ;; OR (load-theme 'modus-vivendi)
   :bind ("<f5>" . modus-themes-toggle))
 
+(use-package diminish
+  :straight t
+  :config
+  (mapcar #'diminish '(eldoc-mode visual-line-mode)))
+
 (use-package vertico
   :straight (:files (:defaults "extensions/*"))
   :init
@@ -383,12 +388,8 @@ current."
 (use-package citar-embark
   :straight t
   :after citar embark
+  :diminish citar-embark-mode
   :config (citar-embark-mode))
-
-(use-package diminish
-  :straight t
-  :config
-  (mapcar #'diminish '(eldoc-mode visual-line-mode citar-embark-mode golden-ratio-mode)))
 
 (use-package abbrev
   :ensure nil
@@ -500,6 +501,7 @@ current."
 
 (use-package golden-ratio
   :straight t
+  :diminish golden-ratio-mode
   :config (golden-ratio-mode))
 
 
