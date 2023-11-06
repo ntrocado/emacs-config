@@ -880,9 +880,8 @@ current."
 
 
 ;;; Lilypond
-(push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
-      load-path)
-(setq LilyPond-lilypond-command "\"c:\\Program Files (x86)\\LilyPond\\usr\\bin\\lilypond.exe\"")
+(if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
+					load-path))
 
 
 ;;; PDF-Tools
