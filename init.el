@@ -887,7 +887,10 @@ current."
 ;;; PDF-Tools
 (use-package pdf-tools
   :straight t
-  :config (pdf-tools-install))
+  :config
+  (pdf-tools-install)
+  :custom
+  (pdf-misc-print-program-executable "/usr/bin/lpr"))
 
 ;;; Epub
 (use-package nov
