@@ -667,7 +667,7 @@ current."
   :after org
   :preface (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory (generic-path "OneDrive/Roam"))
+  (org-roam-directory "~/OneDrive/Roam")
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
