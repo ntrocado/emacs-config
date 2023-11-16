@@ -250,17 +250,17 @@ current."
          ("M-g i" . consult-imenu)
          ("M-g I" . consult-imenu-multi)
          ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find) ;; Alternative: consult-fd
-         ("M-s c" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
+         ("C-c M-s d" . consult-find) ;; Alternative: consult-fd
+         ("C-c M-s c" . consult-locate)
+         ("C-c M-s g" . consult-grep)
+         ("C-c M-s G" . consult-git-grep)
+         ("C-c M-s r" . consult-ripgrep)
+         ("C-c M-s l" . consult-line)
+         ("C-c M-s L" . consult-line-multi)
+         ("C-c M-s k" . consult-keep-lines)
+         ("C-c M-s u" . consult-focus-lines)
          ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
+         ("C-c M-s e" . consult-isearch-history)
          :map isearch-mode-map
          ("M-e" . consult-isearch-history) ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch-history) ;; orig. isearch-edit-string
