@@ -26,6 +26,7 @@
 (show-paren-mode 1)
 (delete-selection-mode 1)
 (global-visual-line-mode t)
+(save-place-mode 1)
 (setq ring-bell-function 'ignore
       column-number-mode t
       mouse-wheel-scroll-amount '(1 ((shift) . 1))
@@ -891,6 +892,11 @@ current."
   (pdf-tools-install)
   :custom
   (pdf-misc-print-program-executable "/usr/bin/lpr"))
+
+(use-package saveplace-pdf-view
+  :straight t
+  :config
+  (save-place-mode 1))
 
 ;;; Epub
 (use-package nov
