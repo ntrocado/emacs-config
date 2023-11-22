@@ -40,7 +40,11 @@
 
 (let ((backup-dir (concat user-emacs-directory "backups")))
   (setq backup-directory-alist (list (cons ".*" backup-dir))
-	auto-save-file-name-transforms (list (list ".*" backup-dir t))))
+	delete-old-versions t
+	kept-new-versions 6
+	kept-old-versions 2
+	version-control t
+	backup-by-copying t))
 
 
 ;;; GLOBAL KEY BINDINGS
