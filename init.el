@@ -158,6 +158,7 @@ current."
   :straight (:files (:defaults "extensions/*"))
   :init
   (vertico-mode)
+  (vertico-indexed-mode)
 
   ;; Different scroll margin
   ;; (setq vertico-scroll-margin 0)
