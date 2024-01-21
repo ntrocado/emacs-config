@@ -386,6 +386,7 @@ current."
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
+  (org-cite-csl-locales-dir "~/OneDrive/lab/csl")
   (citar-bibliography org-cite-global-bibliography)
   ;; optional: org-cite-insert is also bound to C-c C-x C-@
   :bind
