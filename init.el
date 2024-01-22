@@ -744,8 +744,8 @@ current."
 	  ("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
 	   ("-d" "en_US")
 	   nil iso-8859-1)
-	  ("la"
-	   "en_US" "[A-Za-z]" "[^A-Za-z]" "" nil
+	  ("la"	   "[iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]" "[^iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]"
+	   "" nil
 	   ("-d" "la")
 	   nil utf-8))
 	ispell-hunspell-dictionary-alist ispell-dictionary-alist
