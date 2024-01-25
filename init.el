@@ -408,7 +408,7 @@ current."
 
 (use-package dired
   :ensure nil
-  :custom (dired-listing-switches "-lAhv --group-directories-first")
+  :custom (dired-listing-switches "-lAhvtu")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (setq ls-lisp-use-insert-directory-program nil
