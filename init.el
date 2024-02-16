@@ -843,22 +843,23 @@ current."
 (use-package gnus
   :config
   (setq user-full-name "Nuno Trocado"
-	user-mail-address "ntrocado@gmail.com"
+	user-mail-address "nuno@nunotrocado.com"
 	send-mail-function 'smtpmail-send-it
-	smtpmail-smtp-server "smtp.gmail.com"
+	smtpmail-smtp-server "smtp.fastmail.com"
 	smtpmail-stream-type 'starttls
 	smtpmail-smtp-service 587
 	gnus-select-method
-	'(nnimap "gmail"
-		 (nnimap-address "imap.gmail.com")
+	'(nnimap "fastmail"
+		 (nnimap-address "imap.fastmail.com")
 		 (nnimap-server-port 993)
 		 (nnimap-stream ssl)
 		 ;; (nnir-search-engine imap)
-		 (nnmail-expiry-wait-function
-		  (lambda (group)
-		    (if (string-match-p "INBOX" group)
-			'immediate
-		      'never))))
+		 ;; (nnmail-expiry-wait-function
+		 ;;  (lambda (group)
+		 ;;    (if (string-match-p "INBOX" group)
+		 ;; 	'immediate
+		 ;;      'never))))
+		 )
 	gnus-large-newsgroup 1000
 	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
 	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
