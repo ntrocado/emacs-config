@@ -392,6 +392,16 @@ current."
   :bind
   (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 
+(use-package bibtex
+  :ensure nil
+  :config
+  (setq bibtex-autokey-name-year-separator "_"
+	bibtex-autokey-year-title-separator ""
+	bibtex-autokey-year-length 4
+	bibtex-autokey-titleword-length 0
+	bibtex-autokey-titlewords 0
+	bibtex-autokey-name-case-convert-function #'upcase-initials))
+
 (use-package citar-embark
   :straight t
   :after citar embark
