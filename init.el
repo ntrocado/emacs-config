@@ -877,10 +877,13 @@ current."
 			  (visual-line-mode)
 			  (setq mml-enable-flowed nil))))
 
+(use-package message-attachment-reminder
+  ;; TODO config message-attachment-reminder-regexp to include pt expressions
+  :straight t)
+
 ;;; Contacts
 (use-package bbdb
   :straight t
-  :ensure t
   :config
   (bbdb-initialize 'message 'gnus)
   (bbdb-mua-auto-update-init 'message 'gnus)
