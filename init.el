@@ -856,26 +856,19 @@ current."
 	user-mail-address "nuno@nunotrocado.com"
 	send-mail-function 'smtpmail-send-it
 	smtpmail-smtp-server "smtp.fastmail.com"
-	smtpmail-stream-type 'starttls
-	smtpmail-smtp-service 587
+	smtpmail-stream-type 'ssl
+	smtpmail-smtp-service 465
+	smtpmail-servers-requiring-authorization "fastmail"
+	gnus-message-archive-group "nnimap:Sent"
 	gnus-select-method
 	'(nnimap "fastmail"
 		 (nnimap-address "imap.fastmail.com")
 		 (nnimap-server-port 993)
-		 (nnimap-stream ssl)
-		 ;; (nnir-search-engine imap)
-		 ;; (nnmail-expiry-wait-function
-		 ;;  (lambda (group)
-		 ;;    (if (string-match-p "INBOX" group)
-		 ;; 	'immediate
-		 ;;      'never))))
-		 )
+		 (nnimap-stream ssl))
 	gnus-large-newsgroup 1000
 	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
 	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
 	gnus-always-read-dribble-file t))
-  ;; (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
-  ;; (setq nnir-imap-default-search-key "gmail"))
 
 ;;; Send e-mail without inserting newlines
 (use-package message
