@@ -891,7 +891,6 @@ current."
 ;;; Contacts
 (use-package bbdb
   :straight t
-  :ensure t
   :config
   (bbdb-initialize 'message 'gnus)
   (bbdb-mua-auto-update-init 'message 'gnus)
