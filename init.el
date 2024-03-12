@@ -545,6 +545,7 @@ current."
   (require 'ol-docview)
 
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
+  (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
 
   ;; agenda
   (defun %heading-format ()
