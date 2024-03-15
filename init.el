@@ -382,6 +382,7 @@ current."
   :config
   (setq citar-library-paths '("~/OneDrive/lab/pdf/")
 	citar-notes-paths '("~/OneDrive/lab/notes/"))
+  (setf (alist-get 'note citar-templates) "${author}. (${year date:4}). ${title}")
   :custom
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
