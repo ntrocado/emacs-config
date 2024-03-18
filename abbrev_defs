@@ -23,7 +23,6 @@
     ("ot" "of the" nil :count 2)
     ("ow" "otherwise" nil :count 1)
     ("r" "are" nil :count 4)
-    ("s" "was" nil :count 3)
     ("t" "the" nil :count 40)
     ("ta" "that" nil :count 25)
     ("te" "then" nil :count 3)
