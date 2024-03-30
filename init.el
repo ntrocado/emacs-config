@@ -859,7 +859,7 @@ current."
 	smtpmail-stream-type 'ssl
 	smtpmail-smtp-service 465
 	smtpmail-servers-requiring-authorization "fastmail"
-	gnus-message-archive-group "nnimap:Sent"
+	gnus-message-archive-group "nnimap+Mail:Sent"
 	gnus-select-method
 	'(nnimap "fastmail"
 		 (nnimap-address "imap.fastmail.com")
