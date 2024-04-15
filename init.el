@@ -892,6 +892,14 @@ current."
 	bbdb-message-all-addresses t
 	bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
 
+;;; Org-mode → email
+(use-package org-mime
+  :straight t
+  :config
+  (setq org-mime-export-options '(:with-latex dvipng
+                                :section-numbers nil
+                                :with-author nil
+                                :with-toc nil)))
 
 ;;; Lilypond
 (if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
