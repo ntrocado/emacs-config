@@ -431,10 +431,11 @@ current."
 (use-package sly
   :straight t
   :config
-  (load (expand-file-name "~/.roswell/helper.el"))
+  ;(load (expand-file-name "~/.roswell/helper.el"))
   (setq sly-autodoc-mode t
 	sly-autodoc-use-multiline-p t
-	inferior-lisp-program "ros dynamic-space-size=3000 -Q run"))
+	inferior-lisp-program "sbcl" ;"ros dynamic-space-size=3000 -Q run"
+	))
 
 (use-package paredit
   :straight t
