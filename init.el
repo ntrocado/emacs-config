@@ -34,7 +34,8 @@
       inhibit-startup-message t
       sentence-end-double-space nil
       enable-recursive-minibuffers t
-      recentf-max-saved-items 50)
+      recentf-max-saved-items 50
+      time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
 
 ;;; BACKUPS
 
@@ -147,7 +148,10 @@ current."
   :config
   ;; Load the theme of your choice:
   (load-theme 'modus-operandi) ;; OR (load-theme 'modus-vivendi)
-  :bind ("<f5>" . modus-themes-toggle))
+  :bind ("<f5>" . modus-themes-toggle)
+
+  ;; Update timestamp before saving
+  :hook (before-save . time-stamp))
 
 (use-package diminish
   :straight t
@@ -701,21 +705,27 @@ current."
 		 (display-buffer-in-direction)
 		 (direction . right)
 		 (window-width . 0.33)
-		 (window-height . fit-window-to-buffer))))
+		 (window-height . fit-window-to-buffer)))
+
+  (setq org-roam-capture-templates
+	'(("d" "default" plain "%?" :target
+	   (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+		      "Time-stamp: <>\n#+title: ${title}\n")
+	   :unnarrowed t))))
 
 (use-package org-roam-ui
   :straight
-    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
-    :after org-roam
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+  (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+  :after org-roam
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 ;; (use-package org-ref
 ;;   :straight t
