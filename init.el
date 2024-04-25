@@ -544,6 +544,7 @@ current."
 					 "[:space:]"
 					 "."
 					 1))
+  (set-face-attribute 'org-document-title nil :height 1.5)
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
