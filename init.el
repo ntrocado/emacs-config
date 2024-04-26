@@ -432,6 +432,10 @@ current."
   :straight t
   :config (dired-async-mode 1))
 
+(use-package titlecase
+  :straight (titlecase :type git :host github :repo "duckwork/titlecase.el")
+  :custom (titlecase-style 'apa))
+
 (use-package sly
   :straight t
   :config
