@@ -715,7 +715,7 @@ current."
   (setq org-roam-capture-templates
 	'(("d" "default" plain "%?" :target
 	   (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-		      "Time-stamp: <>\n#+title: ${title}\n")
+		      "#+title: ${title}\n# Time-stamp: <>\n")
 	   :unnarrowed t))))
 
 (use-package org-roam-ui
