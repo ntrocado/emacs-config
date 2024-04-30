@@ -548,13 +548,13 @@ current."
 					 "[:space:]"
 					 "."
 					 1))
-  (set-face-attribute 'org-document-title nil :height 1.5)
   :config
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
 
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
   (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-title nil :height 1.5)
 
   ;; agenda
   (defun %heading-format ()
