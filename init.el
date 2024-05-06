@@ -385,6 +385,30 @@ current."
   (setq citar-library-paths '("~/OneDrive/lab/pdf/")
 	citar-notes-paths '("~/OneDrive/lab/notes/"))
   (setf (alist-get 'note citar-templates) "${author}. (${year date:4}). ${title}")
+
+  ;; adapted version of the default function citar-org-format-note-default
+  (defun my/citar-org-format-note (key entry)
+    "Format a note from KEY and ENTRY."
+    (let* ((template (citar--get-template 'note))
+           (note-meta (when template
+			(citar-format--entry template entry)))
+           (filepath (expand-file-name
+                      (concat key ".org")
+                      (car citar-notes-paths)))
+           (buffer (find-file filepath)))
+      (with-current-buffer buffer
+	;; This just overrides other template insertion.
+	(erase-buffer)
+	(citar-org-roam-make-preamble key)
+	(insert "#+title: ")
+	(when template (insert note-meta))
+	(insert "\n# Time-stamp: <>\n\n")
+	(search-backward "|")
+	(delete-char 1)
+	(when (fboundp 'evil-insert)
+          (evil-insert 1)))))
+  (setq citar-note-format-function #'my/citar-org-format-note)
+  
   :custom
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
@@ -393,7 +417,7 @@ current."
   (citar-bibliography org-cite-global-bibliography)
   ;; optional: org-cite-insert is also bound to C-c C-x C-@
   :bind
-  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert))))
 
 (use-package bibtex
   :ensure nil
