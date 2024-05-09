@@ -105,6 +105,13 @@ current."
      (replace-regexp-in-string "\n" " "
 			       (replace-regexp-in-string "-\n" "" text)))))
 
+(defun my/insert-time-stamp ()
+  "Insert a time-stamp at point."
+  (interactive)
+  (when (org-check-for-org-mode) ; org files get a commented-out time-stamp
+    (insert "# "))
+  (insert "Time-stamp: <>\n"))
+
 ;;; PACKAGES
 
 (use-package emacs
