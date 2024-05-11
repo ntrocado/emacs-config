@@ -424,7 +424,7 @@ current."
   (citar-bibliography org-cite-global-bibliography)
   ;; optional: org-cite-insert is also bound to C-c C-x C-@
   :bind
-  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert))))
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 
 (use-package bibtex
   :ensure nil
