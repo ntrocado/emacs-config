@@ -409,11 +409,7 @@ current."
 	(citar-org-roam-make-preamble key)
 	(insert "#+title: ")
 	(when template (insert note-meta))
-	(insert "\n# Time-stamp: <>\n\n")
-	(search-backward "|")
-	(delete-char 1)
-	(when (fboundp 'evil-insert)
-          (evil-insert 1)))))
+	(insert "\n# Time-stamp: <>\n\n"))))
   (setq citar-note-format-function #'my/citar-org-format-note)
   
   :custom
