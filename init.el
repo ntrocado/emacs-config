@@ -957,6 +957,17 @@ current."
   :custom
   (pdf-misc-print-program-executable "/usr/bin/lpr"))
 
+(use-package pdf-view
+  :hook (pdf-view-mode . (lambda ()
+			   (setq-local mode-line-position
+				       '((:eval (pdf-misc-size-indication))
+					 " P " (:eval (number-to-string (pdf-view-current-page)))
+					 ;; Avoid errors during redisplay.
+					 ":" (:eval (or (ignore-errors
+							  (number-to-string (pdf-cache-number-of-pages)))
+							"???"))
+					 "  PL " (:eval (pdf-view-current-pagelabel)))))))
+
 (use-package saveplace-pdf-view
   :straight t
   :config
