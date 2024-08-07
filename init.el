@@ -888,8 +888,8 @@ current."
 
 ;;; Notmuch
 
-;; (when (eql system-type 'gnu/linux)
-;;   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
+(when (eql system-type 'gnu/linux)
+  (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
 
 ;;; Gnus
 
@@ -918,7 +918,8 @@ current."
   :hook (message-mode . (lambda ()
 			  (turn-off-auto-fill)
 			  (visual-line-mode)
-			  (setq mml-enable-flowed nil))))
+			  (setq mml-enable-flowed nil)))
+  :config (setq message-kill-buffer-on-exit t))
 
 (use-package message-attachment-reminder
   ;; TODO config message-attachment-reminder-regexp to include pt expressions
