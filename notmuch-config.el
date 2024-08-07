@@ -2,10 +2,11 @@
   :ensure t
   :pin manual
   :load-path "/usr/share/emacs/site-lisp/"
-  :init (setq notmuch-search-oldest-first nil))
-
-(setq sendmail-program "~/.cargo/bin/mujmap"
-      message-sendmail-extra-arguments '("-C" "~/Mail/account.fastmail" "send"))
+  :init (setq notmuch-search-oldest-first nil
+	      sendmail-program "~/.cargo/bin/mujmap"
+	      message-send-mail-function #'message-send-mail-with-sendmail
+	      message-sendmail-extra-arguments '("-C" "home/trocado/Mail/account.fastmail" "send")
+	      notmuch-fcc-dirs nil))
 
 ;;; Keys to archive and delete
 
