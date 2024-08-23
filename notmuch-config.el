@@ -14,6 +14,11 @@
   :straight t
   :bind ("C-c C-n" . consult-notmuch))
 
+(use-package ol-notmuch
+  :after (org notmuch)
+  :straight (:host github :repo "tarsius/ol-notmuch")
+  :bind ("C-c l" . org-store-link))
+
 ;;; Keys to delete
 
 (define-key notmuch-show-mode-map "d"
