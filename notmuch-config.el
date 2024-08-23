@@ -19,19 +19,6 @@
   :straight (:host github :repo "tarsius/ol-notmuch")
   :bind ("C-c l" . org-store-link))
 
-;;; Keys to delete
-
-(define-key notmuch-show-mode-map "d"
-	    (lambda ()
-              "mark messages for deletion by adding the trash tag"
-              (interactive)
-              (notmuch-show-tag (list "+deleted" "-inbox"))))
-
-(define-key notmuch-search-mode-map "d"
-	    (lambda (&optional beg end)
-              "mark thread for deletion by adding the trash tag"
-              (interactive)
-              (notmuch-search-tag (list "+deleted" "-inbox") beg end)))
 
 ;;; notmuch-hello refresh status message
 
