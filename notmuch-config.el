@@ -14,19 +14,7 @@
   :straight t
   :bind ("C-c C-n" . consult-notmuch))
 
-;;; Keys to archive and delete
-
-(define-key notmuch-show-mode-map "h"
-	    (lambda ()
-              "Archive messages by removing the inbox tag"
-              (interactive)
-              (notmuch-show-tag (list "-inbox"))))
-
-(define-key notmuch-search-mode-map "h"
-	    (lambda (&optional beg end)
-              "Archive thread by removing the inbox tag"
-              (interactive)
-              (notmuch-search-tag (list "-inbox") beg end)))
+;;; Keys to delete
 
 (define-key notmuch-show-mode-map "d"
 	    (lambda ()
