@@ -6,7 +6,8 @@
 	      sendmail-program "~/.cargo/bin/mujmap"
 	      message-send-mail-function #'message-send-mail-with-sendmail
 	      message-sendmail-extra-arguments '("-C" "home/trocado/Mail/account.fastmail" "send")
-	      notmuch-fcc-dirs nil))
+	      notmuch-fcc-dirs nil
+	      notmuch-show-logo nil))
 
 (use-package consult-notmuch
   :after (consult notmuch)
