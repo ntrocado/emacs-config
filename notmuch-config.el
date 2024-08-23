@@ -8,6 +8,11 @@
 	      message-sendmail-extra-arguments '("-C" "home/trocado/Mail/account.fastmail" "send")
 	      notmuch-fcc-dirs nil))
 
+(use-package consult-notmuch
+  :after (consult notmuch)
+  :straight t
+  :bind ("C-c C-n" . consult-notmuch))
+
 ;;; Keys to archive and delete
 
 (define-key notmuch-show-mode-map "h"
