@@ -1,24 +1,3 @@
-;;; STRAIGHT
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-
-;;; USE-PACKAGE
-
-(straight-use-package 'use-package)
-
-
 ;;; GENERAL DEFAULTS
 
 (prefer-coding-system 'utf-8)
@@ -161,12 +140,13 @@ current."
   :hook (before-save . time-stamp))
 
 (use-package diminish
-  :straight t
+  :ensure t
   :config
   (mapcar #'diminish '(eldoc-mode visual-line-mode)))
 
 (use-package vertico
-  :straight (:files (:defaults "extensions/*"))
+  ;; :straight (:files (:defaults "extensions/*"))
+  :ensure t
   :init
   (vertico-mode)
   (vertico-indexed-mode)
@@ -205,7 +185,7 @@ current."
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 (use-package orderless
-  :straight t
+  :ensure t
   :init
   ;; Configure a custom style dispatcher (see the Consult wiki)
   ;; (setq orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch)
@@ -216,7 +196,7 @@ current."
 
 ;; Enable rich annotations using the Marginalia package
 (use-package marginalia
-  :straight t
+  :ensure t
   ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
   ;; available in the *Completions* buffer, add it to the
   ;; `completion-list-mode-map'.
@@ -233,7 +213,7 @@ current."
 
 ;; Example configuration for Consult
 (use-package consult
-  :straight t
+  :ensure t
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -351,7 +331,7 @@ current."
 )
 
 (use-package embark
-  :straight t
+  :ensure t
 
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
@@ -380,12 +360,12 @@ current."
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :straight t ; only need to install it, embark loads it after consult if found
+  :ensure t ; only need to install it, embark loads it after consult if found
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package citar
-  :straight t
+  :ensure t
   :init
   (setq org-cite-global-bibliography '("~/OneDrive/lab/master.bib"))
   :config
@@ -433,7 +413,7 @@ current."
 	bibtex-autokey-name-case-convert-function #'upcase-initials))
 
 (use-package citar-embark
-  :straight t
+  :ensure t
   :after citar embark
   :diminish citar-embark-mode
   :config (citar-embark-mode))
@@ -456,15 +436,16 @@ current."
 	delete-by-moving-to-trash t))
 
 (use-package async
-  :straight t
+  :ensure t
   :config (dired-async-mode 1))
 
 (use-package titlecase
-  :straight (titlecase :type git :host github :repo "duckwork/titlecase.el")
+  ;:straight (titlecase :type git :host github :repo "duckwork/titlecase.el")
+  :ensure t
   :custom (titlecase-style 'apa))
 
 (use-package sly
-  :straight t
+  :ensure t
   :config
   ;(load (expand-file-name "~/.roswell/helper.el"))
   (setq sly-autodoc-mode t
@@ -473,7 +454,7 @@ current."
 	))
 
 (use-package paredit
-  :straight t
+  :ensure t
   :diminish paredit-mode
   :hook ((emacs-lisp-mode
 	  eval-expression-minibuffer-setup
@@ -490,23 +471,23 @@ current."
 			      (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
 
 (use-package company
-  :straight t
+  :ensure t
   :diminish company-mode
   :hook (after-init . global-company-mode)
   :config (setq company-dabbrev-downcase nil
 		company-show-quick-access t))
 
 (use-package company-posframe
-  :straight t
+  :ensure t
   :after company
   :diminish company-posframe-mode
   :config (company-posframe-mode 1))
 
 (use-package magit
-  :straight t)
+  :ensure t)
 
 (use-package circe
-  :straight t
+  :ensure t
   :init
   (defun my-fetch-password (&rest params)
     (require 'auth-source)
@@ -541,7 +522,7 @@ current."
   (setq circe-color-nicks-everywhere t))
 
 (use-package powerthesaurus
-  :straight t
+  :ensure t
   :config
   ;; https://github.com/SavchenkoValeriy/emacs-powerthesaurus/issues/16
   (setq powerthesaurus-request-headers
@@ -549,10 +530,10 @@ current."
 		powerthesaurus-request-headers)))
 
 (use-package pt
-  :straight t)
+  :ensure t)
 
 (use-package golden-ratio
-  :straight t
+  :ensure t
   :diminish golden-ratio-mode
   :config (golden-ratio-mode))
 
@@ -560,7 +541,7 @@ current."
 ;;; ORG
 
 (use-package org
-  :straight t
+  :ensure t
   :custom
   (org-startup-indented t)
   (org-footnote-auto-adjust t)
@@ -716,8 +697,9 @@ current."
 ;; 			 (bibtex-autokey-get-field "doi"))))))
 
 (use-package org-roam
-  :straight (:host github :repo "org-roam/org-roam" :branch "main"
-		   :files (:defaults "extensions/*"))
+  ;; :straight (:host github :repo "org-roam/org-roam" :branch "main"
+  ;; 		   :files (:defaults "extensions/*"))
+  :ensure t
   :after org
   :preface (setq org-roam-v2-ack t)
   :custom
@@ -746,8 +728,9 @@ current."
 	   :unnarrowed t))))
 
 (use-package org-roam-ui
-  :straight
-  (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+  ;; :straight
+  ;; (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+  :ensure t
   :after org-roam
   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
   ;;         a hookable mode anymore, you're advised to pick something yourself
@@ -923,11 +906,11 @@ current."
 
 (use-package message-attachment-reminder
   ;; TODO config message-attachment-reminder-regexp to include pt expressions
-  :straight t)
+  :ensure t)
 
 ;;; Contacts
 (use-package bbdb
-  :straight t
+  :ensure t
   :config
   (bbdb-initialize 'message 'gnus)
   (bbdb-mua-auto-update-init 'message 'gnus)
@@ -938,7 +921,7 @@ current."
 
 ;;; Org-mode → email
 (use-package org-mime
-  :straight t
+  :ensure t
   :config
   (setq org-mime-export-options '(:with-latex dvipng
                                 :section-numbers nil
@@ -952,7 +935,7 @@ current."
 
 ;;; PDF-Tools
 (use-package pdf-tools
-  :straight t
+  :ensure t
   :config
   (pdf-tools-install)
   :custom
@@ -969,12 +952,12 @@ current."
 					 "  PL " (:eval (pdf-view-current-pagelabel)))))))
 
 (use-package saveplace-pdf-view
-  :straight t
+  :ensure t
   :config
   (save-place-mode 1))
 
 ;;; Epub
 (use-package nov
-  :straight t
+  :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
