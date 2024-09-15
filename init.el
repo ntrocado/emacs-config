@@ -145,7 +145,6 @@ current."
   (mapcar #'diminish '(eldoc-mode visual-line-mode)))
 
 (use-package vertico
-  ;; :straight (:files (:defaults "extensions/*"))
   :ensure t
   :init
   (vertico-mode)
@@ -440,7 +439,6 @@ current."
   :config (dired-async-mode 1))
 
 (use-package titlecase
-  ;:straight (titlecase :type git :host github :repo "duckwork/titlecase.el")
   :ensure t
   :custom (titlecase-style 'apa))
 
@@ -697,9 +695,6 @@ current."
 ;; 			 (bibtex-autokey-get-field "doi"))))))
 
 (use-package org-roam
-  ;; :straight (:host github :repo "org-roam/org-roam" :branch "main"
-  ;; 		   :files (:defaults "extensions/*"))
-  :ensure t
   :after org
   :preface (setq org-roam-v2-ack t)
   :custom
@@ -728,8 +723,6 @@ current."
 	   :unnarrowed t))))
 
 (use-package org-roam-ui
-  ;; :straight
-  ;; (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
   :ensure t
   :after org-roam
   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
