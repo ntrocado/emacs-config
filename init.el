@@ -91,6 +91,12 @@ current."
     (insert "# "))
   (insert "Time-stamp: <>\n"))
 
+
+;;; MELPA
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
 ;;; PACKAGES
 
 (use-package emacs
