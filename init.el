@@ -961,8 +961,7 @@ current."
 (use-package pdf-view
   :hook (pdf-view-mode . (lambda ()
 			   (setq-local mode-line-position
-				       '((:eval (pdf-misc-size-indication))
-					 " P " (:eval (number-to-string (pdf-view-current-page)))
+				       '(" P " (:eval (number-to-string (pdf-view-current-page)))
 					 ;; Avoid errors during redisplay.
 					 ":" (:eval (or (ignore-errors
 							  (number-to-string (pdf-cache-number-of-pages)))
