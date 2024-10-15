@@ -600,12 +600,15 @@ current."
 ;;                            (?B . (:foreground "yellow"))
 ;;                            (?C . (:foreground "gray"))))
 
+(use-package ox-typst
+  :after org)
+
+
 ;;; ORG LATEX EXPORT
 
 ;; (setq org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "biber %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
-(setq org-latex-pdf-process (list
-   "latexmk -pdfxe -f %f"))
+(setq org-latex-pdf-process (list "latexmk -pdfxe -f %f"))
 
 (setq org-latex-listings 'listings)
 (setq org-latex-listings-options
