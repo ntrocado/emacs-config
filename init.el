@@ -464,7 +464,8 @@ current."
 	  eval-expression-minibuffer-setup
 	  lisp-mode
 	  lisp-interaction-mode
-	  scheme-mode)
+	  scheme-mode
+	  sly-mrepl-mode)
 	 . enable-paredit-mode)
   :hook (sly-mrepl-mode . (lambda ()
 			    (let ((oldmap (cdr (assoc 'paredit-mode minor-mode-map-alist)))
