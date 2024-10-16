@@ -475,6 +475,34 @@ current."
 			      (make-local-variable 'minor-mode-overriding-map-alist)
 			      (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
 
+(use-package sly ; cl-collider and cl-patterns
+  :config
+  (defun sly-stop-sc ()
+    (interactive)
+    (sly-interactive-eval "(sc:stop)"))
+
+  (defun sly-stop-patterns ()
+    (interactive)
+    (sly-interactive-eval "(cl-patterns:stop t)"))
+
+  (defun cl-patterns-helpers-load ()
+    (interactive)
+    (sly-eval-async '(cl:let ((system (asdf:find-system "cl-patterns" nil)))
+                       (cl:when system (cl:namestring (asdf:system-source-directory system))))
+      (lambda (path)
+        (load (concat path "res/emacs/cl-patterns-helpers") nil nil nil t)
+        (load (concat path "res/emacs/cl-patterns-skeletons") nil nil nil t)))
+    (define-key sly-mode-map (kbd "C-c p") 'cl-patterns-play-or-end-context-or-select-pdef)
+    (define-key sly-mode-map (kbd "C-c P") 'cl-patterns-play-or-stop-context-or-select-pdef)
+    (define-key sly-mode-map (kbd "C-c s") 'cl-patterns-stop-all)
+    (define-key sly-doc-map (kbd "s") 'cl-patterns-supercollider-documentation))
+
+  :bind (:map sly-mode-map
+	      ("C-." . sly-stop-sc)
+	      ("C-," . sly-stop-patterns))
+  :hook
+  (sly-connected . cl-patterns-helpers-load))
+
 (use-package company
   :ensure t
   :diminish company-mode
