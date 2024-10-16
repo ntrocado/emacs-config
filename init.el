@@ -16,6 +16,7 @@
       recentf-max-saved-items 50
       time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
 
+
 ;;; BACKUPS
 
 (let ((backup-dir (concat user-emacs-directory "backups")))
@@ -96,6 +97,7 @@ current."
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
+
 
 ;;; PACKAGES
 
@@ -337,14 +339,12 @@ current."
 
 (use-package embark
   :ensure t
-
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
    ("C-;" . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
-
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
@@ -354,7 +354,6 @@ current."
   ;; OR (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
   :config
-
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -451,11 +450,9 @@ current."
 (use-package sly
   :ensure t
   :config
-  ;(load (expand-file-name "~/.roswell/helper.el"))
   (setq sly-autodoc-mode t
 	sly-autodoc-use-multiline-p t
-	inferior-lisp-program "sbcl" ;"ros dynamic-space-size=3000 -Q run"
-	))
+	inferior-lisp-program "sbcl"))
 
 (use-package paredit
   :ensure t
@@ -570,9 +567,6 @@ current."
   :diminish golden-ratio-mode
   :config (golden-ratio-mode))
 
-
-;;; ORG
-
 (use-package org
   :ensure t
   :custom
@@ -596,141 +590,80 @@ current."
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
   (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
   (set-face-attribute 'org-document-title nil :height 1.5)
-
-  ;; agenda
-  (defun %heading-format ()
-    (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
   
-  (setq org-agenda-files '("~/OneDrive/Escritorio/notas.org"
-			   "~/OneDrive/Documents/tarefas.org")
-	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
-				   (timeline . "  % s")
-				   (todo .
-					 " %i %-12:c %(%heading-format)")
-				   (tags .
-					 " %i %-12:c %(%heading-format)")
-				   (search . " %i %-12:c"))
-	org-agenda-skip-scheduled-if-deadline-is-shown t
-	org-deadline-warning-days 90)
+  ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
+  ;;                            (?B . (:foreground "yellow"))
+  ;;                            (?C . (:foreground "gray"))))
 
-  :bind (("C-c a" . org-agenda)
-	 :map org-mode-map
-	 ("<M-S-left>" . nil)
-	 ("<M-S-right>" . nil)
-	 ("<M-left>" . nil)
-	 ("<M-right>" . nil)
-	 ("<C-S-right>" . 'org-shiftmetaright)
-	 ("<C-S-left>" . 'org-shiftmetaleft)
-	 ("<C-right>" . 'org-metaright)
-	 ("<C-left>" . 'org-metaleft)))
+  ;; Latex export
+  (setq org-latex-pdf-process (list "latexmk -pdfxe -f %f"))
 
-;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
-;;                            (?B . (:foreground "yellow"))
-;;                            (?C . (:foreground "gray"))))
+  (setq org-latex-listings 'listings)
+  (setq org-latex-listings-options
+	'(("frame" "lines")
+          ("basicstyle" "\\ttfamily\\scriptsize")
+          ("numbers" "left")
+          ("numberstyle" "\\tiny")))
 
-(use-package ox-typst
-  :after org)
+  (setq org-latex-prefer-user-labels t)
 
+  (setq org-latex-classes
+	'(("article" "\\documentclass{scrartcl}"
+	   ("\\section{%s}" . "\\section*{%s}")
+	   ("\\subsection{%s}" . "\\subsection*{%s}")
+	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+	  ("report" "\\documentclass[11pt]{report}"
+	   ("\\part{%s}" . "\\part*{%s}")
+	   ("\\chapter{%s}" . "\\chapter*{%s}")
+	   ("\\section{%s}" . "\\section*{%s}")
+	   ("\\subsection{%s}" . "\\subsection*{%s}")
+	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+	  ("book" "\\documentclass[11pt]{book}"
+	   ("\\part{%s}" . "\\part*{%s}")
+	   ("\\chapter{%s}" . "\\chapter*{%s}")
+	   ("\\section{%s}" . "\\section*{%s}")
+	   ("\\subsection{%s}" . "\\subsection*{%s}")
+	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 
-;;; ORG LATEX EXPORT
+  (setq org-export-with-smart-quotes t)
 
-;; (setq org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "biber %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  ;; Blog export
+  (setq org-html-htmlize-output-type 'css)
 
-(setq org-latex-pdf-process (list "latexmk -pdfxe -f %f"))
+  (setq org-publish-project-alist
+	'(("org-trocado"
+           ;; Path to your org files.
+           :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+           :base-extension "org"
 
-(setq org-latex-listings 'listings)
-(setq org-latex-listings-options
-      '(("frame" "lines")
-        ("basicstyle" "\\ttfamily\\scriptsize")
-        ("numbers" "left")
-        ("numberstyle" "\\tiny")))
+           ;; Path to your Jekyll project.
+           :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4
+           :html-extension "html"
+           :body-only t) ;; Only export section between <body> </body>
 
-(setq org-latex-prefer-user-labels t)
+	  ("org-static-trocado"
+           :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|svg"
+           :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+           :recursive t
+           :publishing-function org-publish-attachment)
 
-(setq org-latex-classes
-      '(("article" "\\documentclass{scrartcl}"
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-	("report" "\\documentclass[11pt]{report}"
-	 ("\\part{%s}" . "\\part*{%s}")
-	 ("\\chapter{%s}" . "\\chapter*{%s}")
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-	("book" "\\documentclass[11pt]{book}"
-	 ("\\part{%s}" . "\\part*{%s}")
-	 ("\\chapter{%s}" . "\\chapter*{%s}")
-	 ("\\section{%s}" . "\\section*{%s}")
-	 ("\\subsection{%s}" . "\\subsection*{%s}")
-	 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+	  ("blog" :components ("org-trocado" "org-static-trocado"))))
 
-(setq org-export-with-smart-quotes t)
+  (defun org-custom-link-img-follow (path)
+    (org-open-file-with-emacs
+     (format "../assets/%s" path)))
 
-;; (org-add-link-type
-;;  "latex" nil
-;;  (lambda (path desc format)
-;;    (cond
-;;     ((eq format 'html)
-;;      (format "<span class=\"%s\">%s</span>" path desc))
-;;     ((eq format 'latex)
-;;      (format "\\%s{%s}" path desc)))))
+  (defun org-custom-link-img-export (path desc format)
+    (cond
+     ((eq format 'html)
+      (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc)))))
 
-;;; ORG BLOG EXPORT
-
-(setq org-html-htmlize-output-type 'css)
-
-(setq org-publish-project-alist
-      '(
-
-  ("org-trocado"
-          ;; Path to your org files.
-          :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
-          :base-extension "org"
-
-          ;; Path to your Jekyll project.
-          :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
-          :recursive t
-          :publishing-function org-html-publish-to-html
-          :headline-levels 4
-          :html-extension "html"
-          :body-only t ;; Only export section between <body> </body>
-	  )
-
-
-    ("org-static-trocado"
-          :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
-          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|svg"
-          :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
-          :recursive t
-          :publishing-function org-publish-attachment)
-
-    ("blog" :components ("org-trocado" "org-static-trocado"))))
-
-(defun org-custom-link-img-follow (path)
-  (org-open-file-with-emacs
-   (format "../assets/%s" path)))
-
-(defun org-custom-link-img-export (path desc format)
-  (cond
-   ((eq format 'html)
-    (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc))))
-
-;; (org-link-set-parameters "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
-
-;;; ORG-REF and IVY-BIBTEX
-
-
-;;   (defun my/sci-hub ()
-;;     "Opens a browser for Sci-hub with the bibtex entry at point."
-;;     (interactive)
-;;     (browse-url (concat "https://sci-hub.se/"
-;; 			(replace-regexp-in-string
-;; 			 "https?://\\(dx.\\)?.doi.org/" ""
-;; 			 (bibtex-autokey-get-field "doi"))))))
 
 (use-package org-roam
   :after org
@@ -760,6 +693,36 @@ current."
 		      "#+title: ${title}\n# Time-stamp: <>\n")
 	   :unnarrowed t))))
 
+;;; agenda
+(use-package org
+  :config
+  (defun %heading-format ()
+    (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
+  
+  (setq org-agenda-files '("~/OneDrive/Escritorio/notas.org"
+			   "~/OneDrive/Documents/tarefas.org")
+	org-log-done 'time
+	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
+				   (timeline . "  % s")
+				   (todo .
+					 " %i %-12:c %(%heading-format)")
+				   (tags .
+					 " %i %-12:c %(%heading-format)")
+				   (search . " %i %-12:c"))
+	org-agenda-skip-scheduled-if-deadline-is-shown t
+	org-deadline-warning-days 90)
+
+  :bind (("C-c a" . org-agenda)
+	 :map org-mode-map
+	 ("<M-S-left>" . nil)
+	 ("<M-S-right>" . nil)
+	 ("<M-left>" . nil)
+	 ("<M-right>" . nil)
+	 ("<C-S-right>" . 'org-shiftmetaright)
+	 ("<C-S-left>" . 'org-shiftmetaleft)
+	 ("<C-right>" . 'org-metaright)
+	 ("<C-left>" . 'org-metaleft)))
+
 (use-package org-roam-ui
   :ensure t
   :after org-roam
@@ -773,31 +736,9 @@ current."
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
-;; (use-package org-ref
-;;   :straight t
-;;   :after org
-;;   :init
-;;   (define-key org-mode-map (kbd "C-c c") 'org-ref-insert-link)
-;;   (setq org-ref-default-citation-link "autocite")
-;;   (require 'org-ref-ivy)
-;;   :config
-;;   ;; Count references: https://github.com/jkitchin/org-ref/issues/1034
-;;   (defun my/count-refs ()
-;;     (interactive)
-;;     (let* ((cites (org-element-map (org-element-parse-buffer) 'link
-;; 		    (lambda (lnk)
-;; 		      (when (member (org-element-property :type lnk)
-;; 				    (mapcar 'car org-ref-cite-types))
-;; 			(cl-loop for ref in (plist-get (org-ref-parse-cite-path
-;; 							(org-element-property :path lnk))
-;; 						       :references)
-;; 				 collect (plist-get ref :key))))))
-;; 	   (all-cites (-flatten cites))
-;; 	   (uniq-cites (-uniq all-cites)))
-;;       (message "%d references" (length uniq-cites)))))
+(use-package ox-typst
+  :after org)
 
-
-;;; SPELLING
 (use-package ispell
   :config
   (setq ispell-program-name "hunspell"
@@ -835,77 +776,14 @@ current."
   :hook 
   (text-mode . turn-on-flyspell))
 
-;;; Eww
-
-(setq shr-width 100)
-(setq shr-color-visible-luminance-min 90)
-
-;;; Cl-collider
-
-(defun slime-documentation-supercollider (ugen)
-  (interactive (list
-                (completing-read "Class: " (slime-supercollider-get-ugens-list))))
-  (browse-url (concat "http://doc.sccode.org/Classes/" ugen ".html")))
-
-(defvar slime-supercollider-ugens-list nil)
-
-(defun slime-supercollider-get-ugens-list ()
-  (if (null slime-supercollider-ugens-list)
-      (progn
-        (with-temp-file "c:\\Users\\trocado\\supercollider-get-ugens-list.scd"
-          (insert "\"-----\".postln;Object.allSubclasses.do(_.postcs);\"-----\".postln;0.exit;"))
-        (with-temp-buffer
-          (call-process-shell-command "\"c:\\Program Files\\SuperCollider-3.11.0\\sclang.exe\"" nil t nil "\"c:\\Users\\trocado\\supercollider-get-ugens-list.scd\"")
-          (goto-char (point-min))
-          (search-forward "\n-----\n")
-          (setf slime-supercollider-ugens-list
-                (sort (split-string (buffer-substring-no-properties (point) (- (save-excursion (search-forward "\n-----\n") (point)) 6)) "\n" t) #'string<))))
-    slime-supercollider-ugens-list))
-
-(defun sly-stop-sc ()
-  (interactive)
-  (sly-interactive-eval "(sc:stop)"))
-
-(defun sly-stop-patterns ()
-  (interactive)
-  (sly-interactive-eval "(cl-patterns:stop t)"))
-
-(defun cl-patterns-helpers-load ()
-  (interactive)
-  (sly-eval-async '(cl:namestring (asdf:system-source-directory (asdf:find-system 'cl-patterns)))
-    (lambda (path)
-      (load (concat path "res/emacs/cl-patterns-helpers") nil nil nil t)
-      (load (concat path "res/emacs/cl-patterns-skeletons") nil nil nil t)))
-  (define-key sly-mode-map (kbd "C-c p") 'cl-patterns-play-or-end-context-or-select-pdef)
-  (define-key sly-mode-map (kbd "C-c P") 'cl-patterns-play-or-stop-context-or-select-pdef)
-  (define-key sly-mode-map (kbd "C-c s") 'cl-patterns-stop-all)
-  (define-key sly-doc-map (kbd "s") 'cl-patterns-supercollider-documentation))
-
-(add-hook 'sly-connected-hook 'cl-patterns-helpers-load)
-
-(add-hook 'sly-mode-hook 'my-sly-mode-hook)
-(defun my-sly-mode-hook ()
-  (define-key sly-mode-map (kbd "C-c C-d s") 'slime-documentation-supercollider)
-  (define-key sly-mode-map (kbd "C-.") 'sly-stop-sc)
-  (define-key sly-mode-map (kbd "C-,") 'sly-stop-patterns))
-
-;;; Ag
-
-(setq ag-executable "c:/Program Files/ag/ag.exe")
-
-;;; Multiple cursors
-
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(use-package eww
+  :config
+  (setq shr-width 100)
+  (setq shr-color-visible-luminance-min 90))
 
 ;;; Notmuch
-
 (when (eql system-type 'gnu/linux)
   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
-
-;;; Gnus
 
 (use-package gnus
   :config
@@ -939,7 +817,6 @@ current."
   ;; TODO config message-attachment-reminder-regexp to include pt expressions
   :ensure t)
 
-;;; Contacts
 (use-package bbdb
   :ensure t
   :config
@@ -950,8 +827,7 @@ current."
 	bbdb-message-all-addresses t
 	bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
 
-;;; Org-mode → email
-(use-package org-mime
+(use-package org-mime ;; Org-mode → email
   :ensure t
   :config
   (setq org-mime-export-options '(:with-latex dvipng
@@ -959,12 +835,11 @@ current."
                                 :with-author nil
                                 :with-toc nil)))
 
-;;; Lilypond
-(if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
-					load-path))
+(use-package lilypond
+  :config
+  (if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
+					  load-path)))
 
-
-;;; PDF-Tools
 (use-package pdf-tools
   :ensure t
   :config
@@ -987,7 +862,6 @@ current."
   :config
   (save-place-mode 1))
 
-;;; Epub
 (use-package nov
   :ensure t
   :config
