@@ -11,12 +11,12 @@
 
 (use-package consult-notmuch
   :after (consult notmuch)
-  :straight t
+  :ensure t
   :bind ("C-c C-n" . consult-notmuch))
 
 (use-package ol-notmuch
   :after (org notmuch)
-  :straight (:host github :repo "tarsius/ol-notmuch")
+  :ensure t
   :bind ("C-c l" . org-store-link))
 
 
