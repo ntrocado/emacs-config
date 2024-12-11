@@ -169,7 +169,7 @@ current."
 
   ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
   ;; (setq vertico-cycle t)
-  )
+)
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -866,3 +866,7 @@ current."
   :ensure t
   :config
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+
+(use-package scratch
+  :ensure t
+  :bind ("C-c s" . (lambda () (interactive) (scratch 'org-mode))))
