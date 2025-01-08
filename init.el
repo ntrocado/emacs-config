@@ -569,6 +569,7 @@ current."
 
 (use-package org
   :ensure t
+  :pin gnu
   :custom
   (org-startup-indented t)
   (org-footnote-auto-adjust t)
