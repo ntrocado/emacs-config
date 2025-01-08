@@ -663,8 +663,29 @@ current."
   (defun org-custom-link-img-export (path desc format)
     (cond
      ((eq format 'html)
-      (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc)))))
+      (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc))))
 
+  ;; org-cite
+  (defun my/org-ref-to-org-cite ()
+  "Convert org-ref citations to org-cite format."
+  (interactive)
+  (let ((conversions '(("citet" . "/text")
+		       ("nocite" . "/nocite")
+		       ("citeyear" . "/noauthor")))) ;TODO: add others
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward (rx "[["
+				    (group (*? nonl) "cite" (*? nonl))
+				    ":"
+				    (group (+? nonl)) ;reference(s)
+				    (? (group space (+? nonl))) ;post
+				    "]]")
+				nil t)
+	(replace-match (format "[%s:%s%s]"
+			       (concat "cite" (assoc-default (match-string 1) conversions))
+			       (replace-regexp-in-string "&" "@" (match-string 2))
+			       (or (match-string 3) ""))
+		       nil nil))))))
 
 (use-package org-roam
   :after org
