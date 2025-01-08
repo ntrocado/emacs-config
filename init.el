@@ -530,13 +530,13 @@ current."
 	(error "Password not found for %S" params))))
 
   (defun my-nickserv-password (server)
-    (my-fetch-password :login "trocado" :machine "irc.libera.chat"))
+    (my-fetch-password :login "trocado" :host "irc.libera.chat"))
   
   :config
   (setq circe-network-options
       '(("irc.libera.chat"
 	 :port 7000
-         :use-tls t
+         :tls t
          :nick "trocado"
 	 :user "trocado"
 	 :realname "trocado"
