@@ -759,6 +759,7 @@ current."
         org-roam-ui-open-on-start t))
 
 (use-package ox-typst
+  :ensure t
   :after org)
 
 (use-package ispell
