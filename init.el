@@ -6,10 +6,9 @@
 (delete-selection-mode 1)
 (global-visual-line-mode t)
 (save-place-mode 1)
+(pixel-scroll-precision-mode 1)
 (setq ring-bell-function 'ignore
       column-number-mode t
-      mouse-wheel-scroll-amount '(1 ((shift) . 1))
-      mouse-wheel-progressive-speed nil
       inhibit-startup-message t
       sentence-end-double-space nil
       enable-recursive-minibuffers t
