@@ -859,6 +859,7 @@ current."
                                 :with-toc nil)))
 
 (use-package lilypond
+  :defer t
   :config
   (if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
 					  load-path)))
