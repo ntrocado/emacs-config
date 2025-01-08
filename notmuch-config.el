@@ -1,22 +1,18 @@
 (use-package notmuch
-  :ensure t
-  :pin manual
   :load-path "/usr/share/emacs/site-lisp/"
   :init (setq notmuch-search-oldest-first nil
 	      sendmail-program "~/.cargo/bin/mujmap"
 	      message-send-mail-function #'message-send-mail-with-sendmail
-	      message-sendmail-extra-arguments '("-C" "home/trocado/Mail/account.fastmail" "send")
+	      message-sendmail-extra-arguments '("-C" "home/trocado/mail/account.fastmail" "send")
 	      notmuch-fcc-dirs nil
 	      notmuch-show-logo nil))
 
 (use-package consult-notmuch
   :after (consult notmuch)
-  :ensure t
   :bind ("C-c C-n" . consult-notmuch))
 
 (use-package ol-notmuch
   :after (org notmuch)
-  :ensure t
   :bind ("C-c l" . org-store-link))
 
 
