@@ -16,7 +16,7 @@
       time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
 
 
-;;; BACKUPS
+;;; BACKUPS AND AUTO-SAVES
 
 (let ((backup-dir (concat user-emacs-directory "backups")))
   (setq backup-directory-alist (list (cons ".*" backup-dir))
@@ -25,6 +25,13 @@
 	kept-old-versions 2
 	version-control t
 	backup-by-copying t))
+
+(let ((save-files-directory
+       (file-name-concat user-emacs-directory
+                         "auto-save/")))
+  (make-directory save-files-directory :parents)
+  (setq auto-save-file-name-transforms
+	`((".*" ,save-files-directory t))))
 
 
 ;;; GLOBAL KEY BINDINGS
@@ -760,7 +767,9 @@ current."
 
 (use-package ox-typst
   :ensure t
-  :after org)
+  :after org
+  :custom (org-typst-process (when (eql system-type 'windows-nt)
+			       "typst c --root /Users/trocado/OneDrive \"%s\"")))
 
 (use-package ispell
   :config
