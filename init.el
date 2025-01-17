@@ -375,6 +375,17 @@ current."
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
+(use-package corfu
+  :ensure t
+  :custom (corfu-auto t)
+  :init (global-corfu-mode))
+
+(use-package cape
+  :ensure t
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
+
 (use-package citar
   :ensure t
   :init
@@ -507,18 +518,6 @@ current."
   :hook
   (sly-connected . cl-patterns-helpers-load))
 
-(use-package company
-  :ensure t
-  :diminish company-mode
-  :hook (after-init . global-company-mode)
-  :config (setq company-dabbrev-downcase nil
-		company-show-quick-access t))
-
-(use-package company-posframe
-  :ensure t
-  :after company
-  :diminish company-posframe-mode
-  :config (company-posframe-mode 1))
 
 (use-package magit
   :ensure t)
