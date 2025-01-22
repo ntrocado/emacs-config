@@ -584,6 +584,7 @@ current."
   (calendar-week-start-day 1)
   (org-hide-emphasis-markers t)
   (org-list-allow-alphabetical t)
+  (org-clock-mode-line-total 'current)
   :init
   (setq org-emphasis-regexp-components '("-[:space:]('\"{—"
 					 "-[:space:].,:!?;'\")}\\[—"
