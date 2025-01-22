@@ -378,7 +378,8 @@ current."
 (use-package corfu
   :ensure t
   :custom (corfu-auto t)
-  :init (global-corfu-mode))
+  :init (global-corfu-mode)
+  :config (keymap-unset corfu-map "RET"))
 
 (use-package cape
   :ensure t
