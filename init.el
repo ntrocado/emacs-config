@@ -904,3 +904,14 @@ current."
 (use-package scratch
   :ensure t
   :bind ("C-c s" . (lambda () (interactive) (scratch 'org-mode))))
+
+(use-package gptel
+  :ensure t
+  :config
+  (require 'auth-source)
+  (let ((gemini-api-key (funcall (plist-get (car (auth-source-search :host "gemini"))
+					    :secret))))
+    (when gemini-api-key
+      (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)))
+  (setq gptel-model 'gemini-2.0-flash-exp
+	gptel-default-mode 'org-mode))
