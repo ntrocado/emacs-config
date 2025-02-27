@@ -918,3 +918,7 @@ current."
       (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)))
   (setq gptel-model 'gemini-2.0-flash-exp
 	gptel-default-mode 'org-mode))
+
+(use-package which-key
+  :config
+  (which-key-mode 1))
