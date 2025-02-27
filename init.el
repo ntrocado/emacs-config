@@ -790,15 +790,18 @@ current."
 	   ("-d" "la")
 	   nil utf-8))
 	ispell-hunspell-dictionary-alist ispell-dictionary-alist
-	ispell-dictionary "en_US")
+	ispell-dictionary "en_US"
+	ispell-alternate-dictionary "~/hunspell_en_US")
 
   (defun my/switch-dictionary ()
     (interactive)
     (if (string= ispell-current-dictionary "en_US")
 	(progn (abbrev-mode 0)
-	       (ispell-change-dictionary "pt_PT"))
+	       (ispell-change-dictionary "pt_PT")
+	       (setq ispell-alternate-dictionary "~/hunspell_pt_PT-preao"))
       (progn (abbrev-mode 1)
-	     (ispell-change-dictionary "en_US"))))
+	     (ispell-change-dictionary "en_US")
+	     (setq ispell-alternate-dictionary "~/hunspell_en_US"))))
 
   :bind
   ("<f8>" . my/switch-dictionary))
