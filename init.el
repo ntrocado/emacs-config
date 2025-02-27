@@ -387,6 +387,11 @@ current."
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file))
 
+(use-package ediff
+  :config
+  (setq ediff-split-window-function 'split-window-horizontally
+	ediff-window-setup-function 'ediff-setup-windows-plain))
+
 (use-package citar
   :ensure t
   :init
