@@ -558,7 +558,8 @@ current."
 				"#lispgames" "#supercollider" "#org-mode"
 				"#clschool" "#emacs-circe" "#lilypond"
 				"##running" "#org-roam" "##latin" "##latinitas")
-	 :reduce-lurker-spam t)))
+	 :reduce-lurker-spam t))
+      lui-scroll-behavior 'post-output)
   (require 'circe-color-nicks)
   (enable-circe-color-nicks)
   (setq circe-color-nicks-everywhere t))
