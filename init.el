@@ -916,14 +916,15 @@ current."
 
 (use-package gptel
   :ensure t
+  :custom
+  (gptel-default-mode 'org-mode)
   :config
   (require 'auth-source)
   (let ((gemini-api-key (funcall (plist-get (car (auth-source-search :host "gemini"))
 					    :secret))))
     (when gemini-api-key
-      (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)))
-  (setq gptel-model 'gemini-2.0-flash-exp
-	gptel-default-mode 'org-mode))
+      (setq gptel-backend (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)
+	    gptel-model 'gemini-2.5-pro-exp-03-25))))
 
 (use-package which-key
   :config
