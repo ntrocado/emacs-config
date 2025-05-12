@@ -926,6 +926,15 @@ current."
       (setq gptel-backend (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)
 	    gptel-model 'gemini-2.5-pro-exp-03-25))))
 
+(use-package gptel-quick
+  :after gptel embark
+  :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
+  :ensure t
+  :config
+  (keymap-set embark-general-map "?" #'gptel-quick)
+  (setq gptel-quick-model 'gemini-2.0-flash-exp
+	gptel-quick-backend gptel-backend))
+
 (use-package which-key
   :config
   (which-key-mode 1))
