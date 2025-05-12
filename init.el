@@ -378,7 +378,9 @@ current."
 
 (use-package corfu
   :ensure t
-  :custom (corfu-auto t)
+  :custom
+  (corfu-auto t)
+  (text-mode-ispell-word-completion nil)
   :init (global-corfu-mode)
   :config (keymap-unset corfu-map "RET"))
 
