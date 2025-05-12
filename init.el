@@ -13,7 +13,8 @@
       sentence-end-double-space nil
       enable-recursive-minibuffers t
       recentf-max-saved-items 50
-      time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
+      time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S"
+      large-file-warning-threshold 50000000)
 
 
 ;;; BACKUPS AND AUTO-SAVES
