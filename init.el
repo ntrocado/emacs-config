@@ -867,9 +867,10 @@ current."
   :config
   (bbdb-initialize 'message 'gnus)
   (bbdb-mua-auto-update-init 'message 'gnus)
-  (setf bbdb-mua-action 'create
+  (setq bbdb-mua-action 'create
 	bbdb-mua-pop-up nil
 	bbdb-message-all-addresses t
+	bbdb-allow-duplicates t
 	bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
 
 (use-package org-mime ;; Org-mode → email
