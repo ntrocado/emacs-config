@@ -549,20 +549,20 @@ current."
   
   :config
   (setq circe-network-options
-      '(("irc.libera.chat"
-	 :port 7000
-         :tls t
-         :nick "trocado"
-	 :user "trocado"
-	 :realname "trocado"
-	 :sasl-username "trocado"
-	 :sasl-password my-nickserv-password
-         :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
-				"#lispgames" "#supercollider" "#org-mode"
-				"#clschool" "#emacs-circe" "#lilypond"
-				"##running" "#org-roam" "##latin" "##latinitas")
-	 :reduce-lurker-spam t))
-      lui-scroll-behavior 'post-output)
+	'(("irc.libera.chat"
+	   :port 7000
+           :tls t
+           :nick "trocado"
+	   :user "trocado"
+	   :realname "trocado"
+	   :sasl-username "trocado"
+	   :sasl-password my-nickserv-password
+           :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
+				  "#lispgames" "#supercollider" "#org-mode"
+				  "#clschool" "#emacs-circe" "#lilypond"
+				  "##running" "#org-roam" "##latin" "##latinitas")
+	   :reduce-lurker-spam t))
+	lui-scroll-behavior 'post-output)
   (require 'circe-color-nicks)
   (enable-circe-color-nicks)
   (setq circe-color-nicks-everywhere t))
