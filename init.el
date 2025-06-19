@@ -531,6 +531,10 @@ current."
 (use-package magit
   :ensure t)
 
+(use-package forge
+  :after magit
+  :ensure t)
+
 (use-package circe
   :ensure t
   :init
