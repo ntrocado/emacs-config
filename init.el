@@ -776,10 +776,12 @@ current."
         org-roam-ui-open-on-start t))
 
 (use-package ox-typst
+  :vc (:url "https://github.com/ntrocado/ox-typst" :rev :newest)
   :ensure t
   :after org
-  :custom (org-typst-process (when (eql system-type 'windows-nt)
-			       "typst c --root /Users/trocado/OneDrive \"%s\"")))
+  :custom (org-typst-process (if (eql system-type 'windows-nt)
+				 "typst c --root /Users/trocado/OneDrive \"%s\""
+			       "typst c --root ~/OneDrive/ \"%s\"")))
 
 (use-package ispell
   :config
