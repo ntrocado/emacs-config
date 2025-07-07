@@ -780,7 +780,7 @@ current."
         org-roam-ui-open-on-start t))
 
 (use-package ox-typst
-  :vc (:url "https://github.com/ntrocado/ox-typst" :rev :newest)
+  :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest) 
   :ensure t
   :after org
   :custom (org-typst-process (if (eql system-type 'windows-nt)
