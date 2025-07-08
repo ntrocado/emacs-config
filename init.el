@@ -822,6 +822,8 @@ current."
   ("<f8>" . my/switch-dictionary))
 
 (use-package flyspell
+  :bind (:map flyspell-mode-map
+	      ("C-." . nil))
   :config 
   (setq flyspell-issue-message-flag nil)
   :hook 
