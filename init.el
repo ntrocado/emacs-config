@@ -932,11 +932,14 @@ current."
   (gptel-default-mode 'org-mode)
   :config
   (require 'auth-source)
-  (let ((gemini-api-key (funcall (plist-get (car (auth-source-search :host "gemini"))
-					    :secret))))
-    (when gemini-api-key
-      (setq gptel-backend (gptel-make-gemini "Gemini" :key gemini-api-key :stream t)
-	    gptel-model 'gemini-2.5-pro-exp-03-25))))
+  (defun set-gptel-backend-from-auth-source (host backend-maker backend-name)
+    (let ((api-key (funcall (plist-get (car (auth-source-search :host host))
+				       :secret))))
+      (when api-key
+	(setq gptel-backend (funcall backend-maker backend-name :key api-key :stream t)))))
+  
+  (set-gptel-backend-from-auth-source "gemini" 'gptel-make-gemini "Gemini")
+  (set-gptel-backend-from-auth-source "perplexity" 'gptel-make-perplexity "Perplexity"))
 
 (use-package gptel-quick
   :after gptel embark
