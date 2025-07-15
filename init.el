@@ -625,6 +625,7 @@ current."
   (org-hide-emphasis-markers t)
   (org-list-allow-alphabetical t)
   (org-clock-mode-line-total 'current)
+  (org-export-with-toc nil)
   :init
   (setq org-emphasis-regexp-components '("-[:space:]('\"{—"
 					 "-[:space:].,:!?;'\")}\\[—"
