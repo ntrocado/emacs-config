@@ -99,6 +99,32 @@ current."
     (insert "# "))
   (insert "Time-stamp: <>\n"))
 
+(defun my/sentence-case (beg end)
+  "Downcase region, but upcase first word and first word after a colon."
+  (interactive "r")
+  (let* ((original-str (buffer-substring-no-properties beg end))
+         (downcased-str (downcase original-str))
+         ;; Step 1: Capitalize the very first word of the downcased string.
+         (capitalized-str
+          (let ((pos (string-match "\\S-" downcased-str)))
+            (if pos
+                (concat (substring downcased-str 0 pos)
+                        (upcase (char-to-string (aref downcased-str pos)))
+                        (substring downcased-str (1+ pos)))
+              downcased-str)))
+         ;; Step 2: Find a colon and capitalize the word after it.
+         (final-str
+          (let* ((colon-pos (string-match ":" capitalized-str))
+                 (next-word-pos (and colon-pos
+                                     (string-match "\\S-" capitalized-str (1+ colon-pos)))))
+            (if next-word-pos
+                (concat (substring capitalized-str 0 next-word-pos)
+                        (upcase (char-to-string (aref capitalized-str next-word-pos)))
+                        (substring capitalized-str (1+ next-word-pos)))
+              capitalized-str))))
+    (delete-region beg end)
+    (goto-char beg)
+    (insert final-str)))
 
 ;;; MELPA
 
