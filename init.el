@@ -126,6 +126,12 @@ current."
     (goto-char beg)
     (insert final-str)))
 
+(defun my/current-date ()
+  "Store today's date in YYYYMMDD format in the key ring."
+  (interactive)
+  (kill-new (format-time-string "%Y%m%d")))
+
+
 ;;; MELPA
 
 (require 'package)
