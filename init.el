@@ -45,7 +45,7 @@
 ;;; Set default font and hide scroll-bar
 
 (defun font-exists-p (font) "check if font exists"
-  (if (null (x-list-fonts font)) nil t))
+       (if (null (x-list-fonts font)) nil t))
 
 (defun my/setup-frame (&optional frame)
   "Configure look of FRAME.
@@ -53,17 +53,16 @@ If FRAME is nil, configure current frame. If non-nil, make FRAME
 current."
   (when frame (select-frame frame))
   (when window-system
-    (cond ((font-exists-p "InputMono")
+    (cond ((font-exists-p "Noto")
+	   (set-face-attribute 'fixed-pitch nil :family "Noto Sans Mono")
+	   (set-face-attribute 'variable-pitch nil :font "Noto Sans" :weight 'light))
+	  ((font-exists-p "InputMono")
 	   (set-face-attribute 'default nil :font "InputMono-11")
 	   (set-face-attribute 'fixed-pitch nil :family "InputMono"))
 	  ((font-exists-p "Roboto")
 	   (set-face-attribute 'default nil :font "Roboto Mono")
 	   (set-face-attribute 'variable-pitch nil :font "Roboto")
 	   (set-face-attribute 'fixed-pitch nil :font "Roboto Mono")))
-    (cond ((font-exists-p "-*-Source Sans 3-*")
-	   (set-face-attribute 'variable-pitch nil :font "-outline-Source Sans 3-normal-normal-normal-sans-32-*-*-*-p-*-iso10646-1"))
-	  ((font-exists-p "Noto Sans")
-	   (set-face-attribute 'variable-pitch nil :family "Noto Sans")))
     (toggle-scroll-bar -1)))
 
 (if (daemonp)
