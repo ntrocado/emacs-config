@@ -1000,10 +1000,10 @@ current."
   :config
   (require 'auth-source)
   (defun set-gptel-backend-from-auth-source (host backend-maker backend-name)
-    (let ((api-key (funcall (plist-get (car (auth-source-search :host host))
-				       :secret))))
-      (when api-key
-	(setq gptel-backend (funcall backend-maker backend-name :key api-key :stream t)))))
+    (let ((secret (plist-get (car (auth-source-search :host host))
+				       :secret)))
+      (when secret
+	(setq gptel-backend (funcall backend-maker backend-name :key (funcall secret) :stream t)))))
   
   (set-gptel-backend-from-auth-source "gemini" 'gptel-make-gemini "Gemini")
   (set-gptel-backend-from-auth-source "perplexity" 'gptel-make-perplexity "Perplexity"))
