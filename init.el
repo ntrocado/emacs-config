@@ -436,10 +436,10 @@ current."
 (use-package citar
   :ensure t
   :init
-  (setq org-cite-global-bibliography '("~/OneDrive/lab/master.bib"))
+  (setq org-cite-global-bibliography '("~/Sync/lab/master.bib"))
   :config
-  (setq citar-library-paths '("~/OneDrive/lab/pdf/")
-	citar-notes-paths '("~/OneDrive/lab/notes/"))
+  (setq citar-library-paths '("~/Sync/lab/pdf/")
+	citar-notes-paths '("~/Sync/lab/notes/"))
   (setf (alist-get 'note citar-templates) "${author}. (${year date:4}). ${title}")
 
   ;; adapted version of the default function citar-org-format-note-default
@@ -465,7 +465,7 @@ current."
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (org-cite-csl-locales-dir "~/OneDrive/lab/csl")
+  (org-cite-csl-locales-dir "~/Sync/lab/csl")
   (citar-bibliography org-cite-global-bibliography)
   ;; optional: org-cite-insert is also bound to C-c C-x C-@
   :bind
@@ -696,11 +696,11 @@ current."
   (setq org-publish-project-alist
 	'(("org-trocado"
            ;; Path to your org files.
-           :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+           :base-directory "~/Sync/Practice-log/"
            :base-extension "org"
 
            ;; Path to your Jekyll project.
-           :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+           :publishing-directory "~/Sync/ntrocado.github.io/"
            :recursive t
            :publishing-function org-html-publish-to-html
            :headline-levels 4
@@ -708,9 +708,9 @@ current."
            :body-only t) ;; Only export section between <body> </body>
 
 	  ("org-static-trocado"
-           :base-directory "c:/Users/trocado/OneDrive/Documents/Practice-log/"
+           :base-directory "~/Sync/Practice-log/"
            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|svg"
-           :publishing-directory "c:/Users/trocado/Documents/ntrocado.github.io/"
+           :publishing-directory "~/Sync/ntrocado.github.io/"
            :recursive t
            :publishing-function org-publish-attachment)
 
@@ -751,7 +751,7 @@ current."
   :after org
   :preface (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory "~/OneDrive/Roam")
+  (org-roam-directory "~/Sync/Roam")
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -809,8 +809,8 @@ current."
   (defun %heading-format ()
     (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
   
-  (setq org-agenda-files '("~/OneDrive/Escritorio/notas.org"
-			   "~/OneDrive/Documents/tarefas.org")
+  (setq org-agenda-files '("~/Sync/Escritorio/notas.org"
+			   "~/Sync/tarefas.org")
 	org-log-done 'time
 	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
 				   (timeline . "  % s")
@@ -851,8 +851,8 @@ current."
   :ensure t
   :after org
   :custom (org-typst-process (if (eql system-type 'windows-nt)
-				 "typst c --root /Users/trocado/OneDrive \"%s\""
-			       "typst c --root ~/OneDrive/ \"%s\"")))
+				 "typst c --root ~/Sync \"%s\""
+			       "typst c --root ~/Sync/ \"%s\"")))
 
 (use-package ispell
   :config
