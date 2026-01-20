@@ -81,6 +81,13 @@ current."
   (load custom-file))
 
 
+;;; MAC
+
+(setq ns-right-option-modifier 'none
+      ns-right-command-modifier 'hyper
+      ns-function-modifier 'none)
+
+
 ;;; CONVENIENCE FUNCTIONS
 
 (defun my/remove-newlines-and-hyphens (begin end)
