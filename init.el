@@ -147,6 +147,11 @@ current."
 
 ;;; PACKAGES
 
+(use-package exec-path-from-shell
+  :if (memq window-system '(ns x))
+  :ensure t
+  :init (exec-path-from-shell-initialize))
+
 (use-package emacs
   :init
   ;; Add all your customizations prior to loading the themes
