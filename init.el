@@ -148,7 +148,7 @@ current."
 ;;; PACKAGES
 
 (use-package exec-path-from-shell
-  :if (memq window-system '(ns x))
+  :if (not (bound-and-true-p ns-emacs-plus-injected-path))
   :ensure t
   :init (exec-path-from-shell-initialize))
 
