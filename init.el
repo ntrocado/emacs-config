@@ -814,8 +814,7 @@ current."
   (defun %heading-format ()
     (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
   
-  (setq org-agenda-files '("~/Sync/Escritorio/notas.org"
-			   "~/Sync/tarefas.org")
+  (setq org-agenda-files '("~/Sync/tarefas.org")
 	org-log-done 'time
 	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
 				   (timeline . "  % s")
