@@ -53,7 +53,7 @@ If FRAME is nil, configure current frame. If non-nil, make FRAME
 current."
   (when frame (select-frame frame))
   (when window-system
-    (cond ((font-exists-p "Noto")
+    (cond ((font-exists-p "Noto Sans")
 	   (set-face-attribute 'fixed-pitch nil :family "Noto Sans Mono")
 	   (set-face-attribute 'variable-pitch nil :font "Noto Sans" :weight 'light))
 	  ((font-exists-p "InputMono")
