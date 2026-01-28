@@ -158,11 +158,13 @@ current."
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs nil
         modus-themes-region '(bg-only no-extend)
+	modus-themes-mixed-fonts t
 	modus-themes-headings
 	'((1 . (rainbow overline background 1.1))
           (2 . (rainbow background 1))
           (3 . (rainbow bold 1))
           (t . (regular 1))))
+  (set-face-attribute 'modus-themes-fixed-pitch nil :font "Noto Sans Mono")
 
   ;; Vertico recommended configurations
   
