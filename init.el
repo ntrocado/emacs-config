@@ -83,9 +83,10 @@ current."
 
 ;;; MAC
 
-(setq ns-right-option-modifier 'none
-      ns-right-command-modifier 'hyper
-      ns-function-modifier 'none)
+(when (equal system-type 'darwin)
+  (setq ns-right-option-modifier 'none
+	ns-right-command-modifier 'hyper
+	ns-function-modifier 'none))
 
 
 ;;; CONVENIENCE FUNCTIONS
