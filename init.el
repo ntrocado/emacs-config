@@ -749,7 +749,7 @@ current."
   ;; Latex export
   (setq org-latex-pdf-process (list "latexmk -pdfxe -f %f"))
 
-  (setq org-latex-listings 'listings)
+  (setq org-latex-src-block-backend 'listings)
   (setq org-latex-listings-options
 	'(("frame" "lines")
           ("basicstyle" "\\ttfamily\\scriptsize")
