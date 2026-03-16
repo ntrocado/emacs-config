@@ -54,7 +54,7 @@ current."
   (when frame (select-frame frame))
   (when window-system
     (cond ((font-exists-p "Noto Sans")
-	   (set-face-attribute 'fixed-pitch nil :font "Noto Sans Mono")
+	   (set-face-attribute 'default nil :font "Noto Sans Mono" :weight 'normal)
 	   (set-face-attribute 'variable-pitch nil :font "Noto Sans" :weight 'light))
 	  ((font-exists-p "InputMono")
 	   (set-face-attribute 'default nil :font "InputMono-11")
