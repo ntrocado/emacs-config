@@ -1086,16 +1086,120 @@ current."
   :ensure t
   :custom
   (gptel-default-mode 'org-mode)
+  (gptel-model 'gemini-3.1-flash-lite-preview)
   :config
   (require 'auth-source)
-  (defun set-gptel-backend-from-auth-source (host backend-maker backend-name)
-    (let ((secret (plist-get (car (auth-source-search :host host))
-				       :secret)))
-      (when secret
-	(setq gptel-backend (funcall backend-maker backend-name :key (funcall secret) :stream t)))))
-  
-  (set-gptel-backend-from-auth-source "gemini" 'gptel-make-gemini "Gemini")
-  (set-gptel-backend-from-auth-source "perplexity" 'gptel-make-perplexity "Perplexity"))
+  (require 'json)
+
+  (defun my/get-auth-secret (host)
+    (let ((secret (plist-get (car (auth-source-search :host host)) :secret)))
+      (if (functionp secret)
+          (funcall secret)
+        secret)))
+
+  (let ((gemini-key (my/get-auth-secret "gemini")))
+    (when gemini-key
+      (setq gptel-backend 
+            (gptel-make-gemini "Gemini" :key gemini-key :stream t))))
+
+  (let ((perp-key (my/get-auth-secret "perplexity")))
+    (when perp-key
+      (gptel-make-perplexity "Perplexity" :key perp-key :stream t)))
+
+  (defun my/ingest-pdf (pdf-file)
+    "Extract text from PDF-FILE, ask LLM for metadata, format it, and file it."
+    (interactive "fSelect PDF: ")
+    (let* ((absolute-pdf (expand-file-name pdf-file))
+           (raw-text (shell-command-to-string 
+                      (format "pdftotext -l 3 %s -" (shell-quote-argument absolute-pdf))))
+           (pdf-text (substring raw-text 0 (min (length raw-text) 6000))))
+      
+      (if (string-blank-p (string-trim pdf-text))
+          (message "Ingest Error: pdftotext extracted no text. Is this a scanned image?")
+          
+        (let ((prompt (concat "Extract bibliographic metadata from the provided PDF text.\n"
+                              "Return ONLY a valid JSON object. Do not include markdown formatting.\n"
+                              "Use \"UNKNOWN\" for any field you cannot find. Do not hallucinate data.\n\n"
+                              "CRITICAL RULES:\n"
+                              "1. Use only ONE hyphen for page ranges (e.g., pages={255-285}, not 255--285).\n"
+                              "2. Use sentence case for titles, but keep journal/book names in Title Case.\n"
+                              "3. Protect given names and proper nouns in titles with curly braces.\n"
+                              "4. Include ALL available metadata in the bibtex string (journal, volume, number, pages, doi, publisher, etc.).\n"
+                              "5. Do NOT include 'abstract' or 'keywords'.\n\n"
+                              "REQUIRED JSON TEMPLATE:\n"
+                              "{\n"
+                              "  \"author\": \"Lastname\",\n"
+                              "  \"year\": \"YYYY\",\n"
+                              "  \"title\": \"Full Title of the Work\",\n"
+                              "  \"cite_key\": \"Lastname_YYYY\",\n"
+                              "  \"bibtex\": \"@article{Lastname_YYYY, author = {First Last}, year = {YYYY}, title = {Title}, journal = {Journal Name}, volume = {Vol}, number = {Num}, pages = {XX-YY}, doi = {DOI}, publisher = {Publisher} }\"\n"
+                              "}\n\n"
+                              "TEXT TO ANALYZE:\n"
+                              pdf-text)))
+          
+          (message "Analyzing PDF metadata...")
+          
+          (gptel-request 
+              prompt
+            :context absolute-pdf 
+            :system "You are a JSON-only extraction agent. Return strictly a JSON object matching the requested template."
+            :callback
+            (lambda (response info)
+              (let ((pdf-file (plist-get info :context)))
+		(if (not response)
+                    (message "LLM HTTP Error: %s" (plist-get info :status))
+                 
+                  (condition-case err
+                      (let* ((clean-json (replace-regexp-in-string "\\`[^{]*" "" 
+								   (replace-regexp-in-string "[^}]*\\'" "" response)))
+                             (data (json-read-from-string clean-json))
+                             (author   (alist-get 'author data))
+                             (year     (alist-get 'year data))
+                             (title    (alist-get 'title data))
+                             (raw-key  (alist-get 'cite_key data))
+                             (raw-bib  (alist-get 'bibtex data))
+                            
+                             (cite-key (if raw-key 
+                                           (concat (upcase (substring raw-key 0 1)) (substring raw-key 1)) 
+                                         "UNKNOWN")))
+                       
+			(if (or (string= cite-key "UNKNOWN") (string-match-p "unknown" (downcase cite-key)))
+                            (message "Ingest Aborted. LLM output: %s" clean-json)
+                         
+                          (let ((formatted-bibtex
+                                 (with-temp-buffer
+                                   (insert raw-bib)
+                                   (goto-char (point-min))
+                                   (when (re-search-forward "{[^,]+," nil t)
+                                     (replace-match (format "{%s," cite-key)))
+                                   (bibtex-mode)
+                                   (setq bibtex-align-at-equal-sign t)
+                                   (bibtex-fill-entry)
+                                   (buffer-string)))
+                               
+				(new-pdf-name (expand-file-name (format "%s.pdf" cite-key) "~/Sync/lab/pdf/"))
+				(bib-file (expand-file-name "master.bib" "~/Sync/lab/"))
+				(org-file (expand-file-name "biblog.org" "~/Sync/Doutoramento/")))
+                           
+                            (rename-file pdf-file new-pdf-name t)
+                            (append-to-file (format "\n%s\n" formatted-bibtex) nil bib-file)
+                           
+                            (with-current-buffer (find-file-noselect org-file)
+                              (goto-char (point-max))
+                              (insert (format "\n* %s (%s) %s\n" author year title))
+                              (insert (format "\n\n" cite-key))
+                              (save-buffer))
+                           
+                            (let ((bib-buf (get-file-buffer bib-file))
+                                  (org-buf (get-file-buffer org-file)))
+                              (when bib-buf
+				(with-current-buffer bib-buf (revert-buffer t t t)))
+                              (when org-buf
+				(with-current-buffer org-buf (revert-buffer t t t))))
+                           
+                            (message "Success! Ingested %s." cite-key))))
+                   
+                    (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response))))))))))))
 
 (use-package gptel-quick
   :after gptel embark
