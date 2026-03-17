@@ -1127,8 +1127,8 @@ current."
     (interactive "fSelect PDF: ")
     (let* ((absolute-pdf (expand-file-name pdf-file))
            (raw-text (shell-command-to-string 
-                      (format "pdftotext -l 3 %s -" (shell-quote-argument absolute-pdf))))
-           (pdf-text (substring raw-text 0 (min (length raw-text) 6000))))
+                      (format "pdftotext -l 10 %s -" (shell-quote-argument absolute-pdf))))
+           (pdf-text (substring raw-text 0 (min (length raw-text) 15000))))
       
       (if (string-blank-p (string-trim pdf-text))
           (message "Ingest Error: pdftotext extracted no text. Is this a scanned image?")
