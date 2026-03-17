@@ -1113,14 +1113,14 @@ current."
           (funcall secret)
         secret)))
 
-  (let ((gemini-key (my/get-auth-secret "gemini")))
-    (when gemini-key
-      (setq gptel-backend 
-            (gptel-make-gemini "Gemini" :key gemini-key :stream t))))
+  (setq gptel-backend 
+        (gptel-make-gemini "Gemini" 
+          :key (lambda () (my/get-auth-secret "gemini")) 
+          :stream t))
 
-  (let ((perp-key (my/get-auth-secret "perplexity")))
-    (when perp-key
-      (gptel-make-perplexity "Perplexity" :key perp-key :stream t)))
+  (gptel-make-perplexity "Perplexity" 
+    :key (lambda () (my/get-auth-secret "perplexity")) 
+    :stream t)
 
   (defun my/ingest-pdf (pdf-file)
     "Extract text from PDF-FILE, ask LLM for metadata, format it, and file it."
