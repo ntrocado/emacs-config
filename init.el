@@ -1203,8 +1203,9 @@ current."
                            
                             (with-current-buffer (find-file-noselect org-file)
                               (goto-char (point-max))
+			      (unless (bolp) (insert "\n"))
                               (insert (format "* %s (%s) %s\n" author year title))
-                              (insert (format "\n" cite-key))
+                              (insert (format "[cite:@%s]\n" cite-key))
                               (save-buffer))
                            
                             (let ((bib-buf (get-file-buffer bib-file))
