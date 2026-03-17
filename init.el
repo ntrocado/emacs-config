@@ -1,6 +1,7 @@
 ;;; GENERAL DEFAULTS
 
 (prefer-coding-system 'utf-8)
+(setq epa-pinentry-mode 'loopback)
 (tool-bar-mode 0)
 (show-paren-mode 1)
 (delete-selection-mode 1)
