@@ -1199,13 +1199,13 @@ current."
                            
                             (rename-file pdf-file new-pdf-name t)
                             (append-to-file (format "\n%s\n" formatted-bibtex) nil bib-file)
-
-			    (with-current-buffer (find-file-noselect org-file)
-			      (goto-char (point-max))
-			      (insert (format "\n* %s (%s) %s\n" author year title))
-			      (insert (format "\n" cite-key))
-			      (save-buffer))
-                            
+                           
+                            (with-current-buffer (find-file-noselect org-file)
+                              (goto-char (point-max))
+                              (insert (format "* %s (%s) %s\n" author year title))
+                              (insert (format "\n" cite-key))
+                              (save-buffer))
+                           
                             (let ((bib-buf (get-file-buffer bib-file))
                                   (org-buf (get-file-buffer org-file)))
                               (when bib-buf
