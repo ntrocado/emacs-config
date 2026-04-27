@@ -927,8 +927,10 @@ current."
 	org-agenda-skip-scheduled-if-deadline-is-shown t
 	org-deadline-warning-days 90)
 
+  :bind* (("C-c C-d" . org-deadline))
   :bind (("C-c a" . org-agenda)
 	 :map org-mode-map
+	 ("C-c C-d" . org-deadline)
 	 ("<M-S-left>" . nil)
 	 ("<M-S-right>" . nil)
 	 ("<M-left>" . nil)
