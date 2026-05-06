@@ -1098,7 +1098,7 @@ current."
 
 (use-package scratch
   :ensure t
-  :bind ("C-c s" . (lambda () (interactive) (scratch 'org-mode))))
+  :bind ("<f12>" . (lambda () (interactive) (scratch 'org-mode))))
 
 (use-package gptel
   :ensure t
