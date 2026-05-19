@@ -1104,7 +1104,7 @@ current."
   :ensure t
   :custom
   (gptel-default-mode 'org-mode)
-  (gptel-model 'gemini-3.1-flash-lite-preview)
+  (gptel-model 'gemini-3.1-flash-lite)
   :config
   (require 'auth-source)
   (require 'json)
