@@ -107,6 +107,13 @@ current."
     (insert "# "))
   (insert "Time-stamp: <>\n"))
 
+(defun my/insert-todays-date ()
+  "Insert today's date in YYYYMMDD format at point."
+  (interactive)
+  (insert (format-time-string "%Y%m%d")))
+
+(global-set-key (kbd "<f7>") 'my/insert-todays-date)
+
 (defun my/sentence-case (beg end)
   "Downcase region, but upcase first word and first word after a colon."
   (interactive "r")
