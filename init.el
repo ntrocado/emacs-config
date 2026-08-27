@@ -175,7 +175,6 @@ current."
           (2 . (rainbow background 1))
           (3 . (rainbow bold 1))
           (t . (regular 1))))
-  (set-face-attribute 'modus-themes-fixed-pitch nil :font "Noto Sans Mono")
 
   ;; Vertico recommended configurations
   
