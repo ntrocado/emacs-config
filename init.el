@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;; GENERAL DEFAULTS
 
 (prefer-coding-system 'utf-8)
