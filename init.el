@@ -105,7 +105,7 @@ current."
 (defun my/insert-time-stamp ()
   "Insert a time-stamp at point."
   (interactive)
-  (when (org-check-for-org-mode) ; org files get a commented-out time-stamp
+  (when (derived-mode-p 'org-mode) ; org files get a commented-out time-stamp
     (insert "# "))
   (insert "Time-stamp: <>\n"))
 
@@ -640,6 +640,7 @@ current."
 					 "."
 					 1))
   :config
+  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
 
@@ -720,6 +721,10 @@ current."
      ((eq format 'html)
       (format "<img src=\"/assets/%s\" alt=\"%s\"/>" path desc))))
 
+  (org-link-set-parameters "img"
+                           :follow #'org-custom-link-img-follow
+                           :export #'org-custom-link-img-export)
+
   ;; org-cite
   (defun my/org-ref-to-org-cite ()
   "Convert org-ref citations to org-cite format."
@@ -740,11 +745,38 @@ current."
 			       (concat "cite" (assoc-default (match-string 1) conversions))
 			       (replace-regexp-in-string "&" "@" (match-string 2))
 			       (or (match-string 3) ""))
-		       nil nil))))))
+		       nil nil)))))
+
+  (defun %heading-format ()
+    (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
+
+  (setq org-agenda-files '("~/Sync/tarefas.org")
+	org-log-done 'time
+	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
+				   (timeline . "  % s")
+				   (todo .
+					 " %i %-12:c %(%heading-format)")
+				   (tags .
+					 " %i %-12:c %(%heading-format)")
+				   (search . " %i %-12:c"))
+	org-agenda-skip-scheduled-if-deadline-is-shown t
+	org-deadline-warning-days 90)
+
+  :bind (("C-c a" . org-agenda)
+	 ("C-c l" . org-store-link)
+	 :map org-mode-map
+	 ("C-c C-d" . org-deadline)
+	 ("<M-S-left>" . nil)
+	 ("<M-S-right>" . nil)
+	 ("<M-left>" . nil)
+	 ("<M-right>" . nil)
+	 ("<C-S-right>" . org-shiftmetaright)
+	 ("<C-S-left>" . org-shiftmetaleft)
+	 ("<C-right>" . org-metaright)
+	 ("<C-left>" . org-metaleft)))
 
 (use-package org-roam
   :after org
-  :preface (setq org-roam-v2-ack t)
   :custom
   (org-roam-directory "~/Sync/Roam")
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -773,10 +805,6 @@ current."
 (use-package consult-org-roam
    :ensure t
    :after org-roam
-   :init
-   (require 'consult-org-roam)
-   ;; Activate the minor mode
-   (consult-org-roam-mode 1)
    :custom
    ;; Use `ripgrep' for searching with `consult-org-roam-search'
    (consult-org-roam-grep-func #'consult-ripgrep)
@@ -786,6 +814,8 @@ current."
    ;; in consult-buffer (and not down at the bottom)
    (consult-org-roam-buffer-after-buffers t)
    :config
+   ;; Activate the minor mode
+   (consult-org-roam-mode 1)
    ;; Eventually suppress previewing for certain functions
    (consult-customize
     consult-org-roam-forward-links
@@ -797,36 +827,6 @@ current."
    ("C-c n B" . consult-org-roam-backlinks-recursive)
    ("C-c n l" . consult-org-roam-forward-links)
    ("C-c n r" . consult-org-roam-search))
-
-;;; agenda
-(use-package org
-  :config
-  (defun %heading-format ()
-    (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
-  
-  (setq org-agenda-files '("~/Sync/tarefas.org")
-	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
-				   (timeline . "  % s")
-				   (todo .
-					 " %i %-12:c %(%heading-format)")
-				   (tags .
-					 " %i %-12:c %(%heading-format)")
-				   (search . " %i %-12:c"))
-	org-agenda-skip-scheduled-if-deadline-is-shown t
-	org-deadline-warning-days 90)
-
-  :bind (("C-c a" . org-agenda)
-	 :map org-mode-map
-	 ("C-c C-d" . org-deadline)
-	 ("<M-S-left>" . nil)
-	 ("<M-S-right>" . nil)
-	 ("<M-left>" . nil)
-	 ("<M-right>" . nil)
-	 ("<C-S-right>" . 'org-shiftmetaright)
-	 ("<C-S-left>" . 'org-shiftmetaleft)
-	 ("<C-right>" . 'org-metaright)
-	 ("<C-left>" . 'org-metaleft)))
 
 (use-package org-roam-ui
   :ensure t
