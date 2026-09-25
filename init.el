@@ -411,9 +411,10 @@
   (add-hook 'completion-at-point-functions #'cape-file))
 
 (use-package ediff
-  :config
-  (setq ediff-split-window-function 'split-window-horizontally
-	ediff-window-setup-function 'ediff-setup-windows-plain))
+  :ensure nil
+  :custom
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package citar
   :ensure t
@@ -455,13 +456,13 @@
 
 (use-package bibtex
   :ensure nil
-  :config
-  (setq bibtex-autokey-name-year-separator "_"
-	bibtex-autokey-year-title-separator ""
-	bibtex-autokey-year-length 4
-	bibtex-autokey-titleword-length 0
-	bibtex-autokey-titlewords 0
-	bibtex-autokey-name-case-convert-function #'upcase-initials))
+  :custom
+  (bibtex-autokey-name-year-separator "_")
+  (bibtex-autokey-year-title-separator "")
+  (bibtex-autokey-year-length 4)
+  (bibtex-autokey-titleword-length 0)
+  (bibtex-autokey-titlewords 0)
+  (bibtex-autokey-name-case-convert-function #'upcase-initials))
 
 (use-package citar-embark
   :ensure t
@@ -989,9 +990,9 @@
 
   (gptel-make-perplexity "Perplexity" 
     :key (lambda () (my/get-auth-secret "perplexity")) 
-    :stream t)
+    :stream t))
 
-  (defun my/ingest-pdf (pdf-file)
+(defun my/ingest-pdf (pdf-file)
     "Extract text from PDF-FILE, ask LLM for metadata, format it, and file it."
     (interactive "fSelect PDF: ")
     (let* ((absolute-pdf (expand-file-name pdf-file))
@@ -1086,7 +1087,7 @@
                            
                             (message "Success! Ingested %s." cite-key))))
                    
-                    (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response))))))))))))
+                    (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response)))))))))))
 
 (use-package gptel-quick
   :after gptel embark
