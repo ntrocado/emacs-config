@@ -1050,6 +1050,9 @@
 
                     (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response)))))))))))
 
+(use-package posframe
+  :ensure t)
+
 (use-package gptel-quick
   :after gptel embark
   :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
