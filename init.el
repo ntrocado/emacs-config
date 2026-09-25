@@ -4,14 +4,13 @@
 
 (prefer-coding-system 'utf-8)
 (setq epa-pinentry-mode 'loopback)
-(tool-bar-mode 0)
-(show-paren-mode 1)
+(tool-bar-mode -1)
 (delete-selection-mode 1)
 (global-visual-line-mode t)
 (save-place-mode 1)
+(column-number-mode 1)
 (pixel-scroll-precision-mode 1)
 (setq ring-bell-function 'ignore
-      column-number-mode t
       inhibit-startup-message t
       sentence-end-double-space nil
       enable-recursive-minibuffers t
@@ -153,7 +152,6 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
 
 
 ;;; PACKAGES
@@ -169,13 +167,11 @@
   ;; Add all your customizations prior to loading the themes
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs nil
-        modus-themes-region '(bg-only no-extend)
-	modus-themes-mixed-fonts t
-	modus-themes-headings
-	'((1 . (rainbow overline background 1.1))
-          (2 . (rainbow background 1))
-          (3 . (rainbow bold 1))
-          (t . (regular 1))))
+        modus-themes-mixed-fonts t
+        modus-themes-headings
+        '((1 . (1.1))
+          (2 . (1.0))
+          (t . (1.0))))
 
   ;; Vertico recommended configurations
   
@@ -195,13 +191,9 @@
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  ;; (setq read-extended-command-predicate
-  ;;       #'command-completion-default-include-p)
-
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t)
+  ;; Emacs 28+: Hide commands in M-x which do not work in the current mode.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
 
   :config
   ;; Load the theme of your choice:
@@ -618,8 +610,6 @@
 	(delete '("Accept-Encoding" . "gzip, deflate, br")
 		powerthesaurus-request-headers)))
 
-(use-package pt
-  :ensure t)
 
 (use-package golden-ratio
   :ensure t
@@ -895,7 +885,7 @@
   :config 
   (setq flyspell-issue-message-flag nil)
   :hook 
-  (text-mode . turn-on-flyspell))
+  (text-mode . flyspell-mode))
 
 (use-package eww
   :config
@@ -929,7 +919,7 @@
 ;;; Send e-mail without inserting newlines
 (use-package message
   :hook (message-mode . (lambda ()
-			  (turn-off-auto-fill)
+			  (auto-fill-mode -1)
 			  (visual-line-mode)
 			  (setq mml-enable-flowed nil)))
   :config (setq message-kill-buffer-on-exit t))
@@ -981,9 +971,7 @@
 					 "  PL " (:eval (pdf-view-current-pagelabel)))))))
 
 (use-package saveplace-pdf-view
-  :ensure t
-  :config
-  (save-place-mode 1))
+  :ensure t)
 
 (use-package nov
   :ensure t
@@ -1065,7 +1053,7 @@
                   (condition-case err
                       (let* ((clean-json (replace-regexp-in-string "\\`[^{]*" "" 
 								   (replace-regexp-in-string "[^}]*\\'" "" response)))
-                             (data (json-read-from-string clean-json))
+                             (data (json-parse-string clean-json :object-type 'alist))
                              (author   (alist-get 'author data))
                              (year     (alist-get 'year data))
                              (title    (alist-get 'title data))
@@ -1125,5 +1113,6 @@
 	gptel-quick-backend gptel-backend))
 
 (use-package which-key
-  :config
+  :ensure nil
+  :init
   (which-key-mode 1))
