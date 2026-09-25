@@ -1059,7 +1059,7 @@
   :ensure t
   :config
   (keymap-set embark-general-map "?" #'gptel-quick)
-  (setq gptel-quick-model 'gemini-2.0-flash-exp
+  (setq gptel-quick-model 'gemini-flash-latest
         gptel-quick-backend gptel-backend))
 
 ;;; 11. CONVENIENCE UTILITIES
