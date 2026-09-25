@@ -46,7 +46,7 @@
 
 ;;; Set default font and hide scroll-bar
 
-(defun font-exists-p (font)
+(defun my/font-exists-p (font)
   "Check if FONT exists."
   (and (find-font (font-spec :name font)) t))
 
@@ -63,13 +63,13 @@
                                        (width . 90)
                                        (height . 40))))
     (with-selected-frame frame
-      (cond ((font-exists-p "Noto Sans")
+      (cond ((my/font-exists-p "Noto Sans")
 	     (set-face-attribute 'default frame :font "Noto Sans Mono" :weight 'normal)
 	     (set-face-attribute 'variable-pitch frame :font "Noto Sans" :weight 'light))
-	    ((font-exists-p "InputMono")
+	    ((my/font-exists-p "InputMono")
 	     (set-face-attribute 'default frame :font "InputMono-11")
 	     (set-face-attribute 'fixed-pitch frame :family "InputMono"))
-	    ((font-exists-p "Roboto")
+	    ((my/font-exists-p "Roboto")
 	     (set-face-attribute 'default frame :font "Roboto Mono")
 	     (set-face-attribute 'variable-pitch frame :font "Roboto")
 	     (set-face-attribute 'fixed-pitch frame :font "Roboto Mono"))))))
@@ -188,14 +188,14 @@
   
   ;; Add prompt indicator to `completing-read-multiple'.
   ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
-  (defun crm-indicator (args)
+  (defun my/crm-indicator (args)
     (cons (format "[CRM%s] %s"
                   (replace-regexp-in-string
                    "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
                    crm-separator)
                   (car args))
           (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  (advice-add #'completing-read-multiple :filter-args #'my/crm-indicator)
 
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
@@ -523,6 +523,7 @@
   (setq sly-autodoc-use-multiline-p t
 	inferior-lisp-program "sbcl")
 
+  ;; TODO: Rename sly-stop-sc, sly-stop-patterns, and cl-patterns-helpers-load to use my/ prefix
   (defun sly-stop-sc ()
     (interactive)
     (sly-interactive-eval "(sc:stop)"))
@@ -560,7 +561,7 @@
 (use-package circe
   :ensure t
   :init
-  (defun my-fetch-password (&rest params)
+  (defun my/fetch-password (&rest params)
     (require 'auth-source)
     (let ((match (car (apply 'auth-source-search params))))
       (if match
@@ -570,8 +571,8 @@
               secret))
 	(error "Password not found for %S" params))))
 
-  (defun my-nickserv-password (server)
-    (my-fetch-password :login "trocado" :host "irc.libera.chat"))
+  (defun my/nickserv-password (server)
+    (my/fetch-password :login "trocado" :host "irc.libera.chat"))
   
   :config
   (setq circe-network-options
@@ -582,7 +583,7 @@
 	   :user "trocado"
 	   :realname "trocado"
 	   :sasl-username "trocado"
-	   :sasl-password my-nickserv-password
+	   :sasl-password my/nickserv-password
            :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
 				  "#lispgames" "#supercollider" "#org-mode"
 				  "#clschool" "#emacs-circe" "#lilypond"
@@ -730,17 +731,17 @@
 			       (or (match-string 3) ""))
 		       nil nil)))))
 
-  (defun %heading-format ()
+  (defun my/org-heading-format ()
     (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
 
   (setq org-agenda-files '("~/Sync/tarefas.org")
 	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(%heading-format)")
+	org-agenda-prefix-format '((agenda . " %i %s %(my/org-heading-format)")
 				   (timeline . "  % s")
 				   (todo .
-					 " %i %-12:c %(%heading-format)")
+					 " %i %-12:c %(my/org-heading-format)")
 				   (tags .
-					 " %i %-12:c %(%heading-format)")
+					 " %i %-12:c %(my/org-heading-format)")
 				   (search . " %i %-12:c"))
 	org-agenda-skip-scheduled-if-deadline-is-shown t
 	org-deadline-warning-days 90)
