@@ -59,7 +59,9 @@
   (when (display-graphic-p frame)
     (if (<= (seq-count #'display-graphic-p (frame-list)) 1)
         (set-frame-parameter frame 'fullscreen 'maximized)
-      (set-frame-parameter frame 'fullscreen nil))
+      (modify-frame-parameters frame '((fullscreen . nil)
+                                       (width . 90)
+                                       (height . 40))))
     (with-selected-frame frame
       (cond ((font-exists-p "Noto Sans")
 	     (set-face-attribute 'default frame :font "Noto Sans Mono" :weight 'normal)
@@ -75,6 +77,11 @@
 (add-hook 'after-make-frame-functions #'my/setup-frame)
 (unless (daemonp)
   (my/setup-frame))
+
+;; Ensure standalone Emacs listens for emacsclient connections
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 
 (add-hook 'text-mode-hook #'variable-pitch-mode)
 
