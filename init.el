@@ -21,7 +21,7 @@
 
 ;;; BACKUPS AND AUTO-SAVES
 
-(let ((backup-dir (concat user-emacs-directory "backups")))
+(let ((backup-dir (file-name-concat user-emacs-directory "backups")))
   (setq backup-directory-alist (list (cons ".*" backup-dir))
 	delete-old-versions t
 	kept-new-versions 6
@@ -40,9 +40,9 @@
 ;;; GLOBAL KEY BINDINGS
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-(global-set-key (kbd "<apps>") #'other-window)
-(global-set-key (kbd "<menu>") #'other-window)
-(global-set-key (kbd "H-o") #'other-window)
+(keymap-global-set "<apps>" #'other-window)
+(keymap-global-set "<menu>" #'other-window)
+(keymap-global-set "H-o" #'other-window)
 
 ;;; Set default font and hide scroll-bar
 
@@ -124,7 +124,7 @@
   (interactive)
   (insert (format-time-string "%Y%m%d")))
 
-(global-set-key (kbd "<f7>") 'my/insert-todays-date)
+(keymap-global-set "<f7>" #'my/insert-todays-date)
 
 (defun my/sentence-case (beg end)
   "Downcase region, but upcase first word and first word after a colon."
@@ -223,20 +223,7 @@
   :ensure t
   :init
   (vertico-mode)
-  (vertico-indexed-mode)
-
-  ;; Different scroll margin
-  ;; (setq vertico-scroll-margin 0)
-
-  ;; Show more candidates
-  ;; (setq vertico-count 20)
-
-  ;; Grow and shrink the Vertico minibuffer
-  ;; (setq vertico-resize t)
-
-  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-  ;; (setq vertico-cycle t)
-  )
+  (vertico-indexed-mode))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -396,9 +383,7 @@
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect"
                  nil
-                 (window-parameters (mode-line-format . none))))
-  ;(setq embark-prompter #'embark-completing-read-prompter)
-  )
+                 (window-parameters (mode-line-format . none)))))
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
@@ -649,10 +634,6 @@
   (add-to-list 'org-link-frame-setup '(file . find-file)) ; open links in the same window
   (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
   (set-face-attribute 'org-document-title nil :height 1.5)
-  
-  ;; (setq org-priority-faces '((?A . (:foreground "red" :weight 'bold))
-  ;;                            (?B . (:foreground "yellow"))
-  ;;                            (?C . (:foreground "gray"))))
 
   ;; Latex export
   (setq org-latex-pdf-process (list "latexmk -pdfxe -f %f"))
@@ -849,9 +830,7 @@
   :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest) 
   :ensure t
   :after org
-  :custom (org-typst-process (if (eql system-type 'windows-nt)
-				 "typst c --root ~/Sync \"%s\""
-			       "typst c --root ~/Sync/ \"%s\"")))
+  :custom (org-typst-process "typst c --root ~/Sync/ \"%s\""))
 
 (use-package ispell
   :config
@@ -877,7 +856,7 @@
   (defun my/switch-dictionary ()
     (interactive)
     (if (string= ispell-current-dictionary "en_US")
-	(progn (abbrev-mode 0)
+	(progn (abbrev-mode -1)
 	       (ispell-change-dictionary "pt_PT")
 	       (setq ispell-alternate-dictionary "~/hunspell_pt_PT-preao"))
       (progn (abbrev-mode 1)
@@ -956,10 +935,7 @@
                                 :with-toc nil)))
 
 (use-package lilypond
-  :defer t
-  :config
-  (if (eql system-type 'windows-nt) (push "c:/Program Files (x86)/LilyPond/usr/share/emacs/site-lisp"
-					  load-path)))
+  :defer t)
 
 (use-package pdf-tools
   :ensure t
