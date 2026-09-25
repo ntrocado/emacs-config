@@ -3,7 +3,7 @@
   :init (setq notmuch-search-oldest-first nil
 	      sendmail-program "~/.cargo/bin/mujmap"
 	      message-send-mail-function #'message-send-mail-with-sendmail
-	      message-sendmail-extra-arguments '("-C" "home/trocado/mail/account.fastmail" "send")
+	      message-sendmail-extra-arguments '("-C" "/home/trocado/mail/account.fastmail" "send")
 	      notmuch-fcc-dirs nil
 	      notmuch-show-logo nil))
 
@@ -12,8 +12,7 @@
   :bind ("C-c C-n" . consult-notmuch))
 
 (use-package ol-notmuch
-  :after (org notmuch)
-  :bind ("C-c l" . org-store-link))
+  :after (org notmuch))
 
 
 ;;; notmuch-hello refresh status message
@@ -37,7 +36,7 @@
                (notmuch-hello-nice-number (- diff-count)))))
     (setq notmuch-hello-refresh-count new-count)))
 
-(add-hook 'notmuch-hello-refresh-hook 'notmuch-hello-refresh-status-message)
+(add-hook 'notmuch-hello-refresh-hook #'notmuch-hello-refresh-status-message)
 
 ;;; Attach files from dired
-(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+(add-hook 'dired-mode-hook #'gnus-dired-mode)
