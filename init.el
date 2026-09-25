@@ -256,13 +256,11 @@ current."
 
 (use-package orderless
   :ensure t
-  :init
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (setq orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch)
-  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-pcm-leading-wildcard t))
 
 ;; Enable rich annotations using the Marginalia package
 (use-package marginalia
@@ -395,7 +393,7 @@ current."
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+               '("\\`\\*Embark Collect"
                  nil
                  (window-parameters (mode-line-format . none))))
   ;(setq embark-prompter #'embark-completing-read-prompter)
@@ -415,10 +413,17 @@ current."
   :init (global-corfu-mode)
   :config (keymap-unset corfu-map "RET"))
 
+(use-package corfu-popupinfo
+  :after corfu
+  :ensure nil
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom
+  (corfu-popupinfo-delay '(0.4 . 0.2)))
+
 (use-package cape
   :ensure t
   :init
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-dabbrev t)
   (add-hook 'completion-at-point-functions #'cape-file))
 
 (use-package ediff
