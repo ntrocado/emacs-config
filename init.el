@@ -626,13 +626,6 @@ current."
   :ensure t
   :custom (titlecase-style 'apa))
 
-(use-package sly
-  :ensure t
-  :config
-  (setq sly-autodoc-mode t
-	sly-autodoc-use-multiline-p t
-	inferior-lisp-program "sbcl"))
-
 (use-package paredit
   :ensure t
   :diminish paredit-mode
@@ -647,12 +640,16 @@ current."
 			    (let ((oldmap (cdr (assoc 'paredit-mode minor-mode-map-alist)))
 				  (newmap (make-sparse-keymap)))
 			      (set-keymap-parent newmap oldmap)
-			      (define-key newmap ["RET"] nil)
+			      (define-key newmap (kbd "RET") nil)
 			      (make-local-variable 'minor-mode-overriding-map-alist)
 			      (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
 
-(use-package sly ; cl-collider and cl-patterns
+(use-package sly
+  :ensure t
   :config
+  (setq sly-autodoc-use-multiline-p t
+	inferior-lisp-program "sbcl")
+
   (defun sly-stop-sc ()
     (interactive)
     (sly-interactive-eval "(sc:stop)"))
@@ -935,7 +932,6 @@ current."
 	org-agenda-skip-scheduled-if-deadline-is-shown t
 	org-deadline-warning-days 90)
 
-  :bind* (("C-c C-d" . org-deadline))
   :bind (("C-c a" . org-agenda)
 	 :map org-mode-map
 	 ("C-c C-d" . org-deadline)
