@@ -40,41 +40,40 @@
 
 ;;; GLOBAL KEY BINDINGS
 
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(keymap-set key-translation-map "<escape>" "C-g")
 (global-set-key (kbd "<apps>") #'other-window)
 (global-set-key (kbd "<menu>") #'other-window)
 (global-set-key (kbd "H-o") #'other-window)
 
 ;;; Set default font and hide scroll-bar
 
-(defun font-exists-p (font) "check if font exists"
-       (if (null (x-list-fonts font)) nil t))
+(defun font-exists-p (font)
+  "Check if FONT exists."
+  (and (find-font (font-spec :name font)) t))
+
+(scroll-bar-mode -1)
+(add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 
 (defun my/setup-frame (&optional frame)
-  "Configure look of FRAME.
-If FRAME is nil, configure current frame. If non-nil, make FRAME
-current."
-  (when frame (select-frame frame))
-  (when window-system
+  "Configure look of FRAME."
+  (when (display-graphic-p frame)
+    (with-selected-frame (or frame (selected-frame))
     (cond ((font-exists-p "Noto Sans")
-	   (set-face-attribute 'default nil :font "Noto Sans Mono" :weight 'normal)
-	   (set-face-attribute 'variable-pitch nil :font "Noto Sans" :weight 'light))
+	   (set-face-attribute 'default frame :font "Noto Sans Mono" :weight 'normal)
+	   (set-face-attribute 'variable-pitch frame :font "Noto Sans" :weight 'light))
 	  ((font-exists-p "InputMono")
-	   (set-face-attribute 'default nil :font "InputMono-11")
-	   (set-face-attribute 'fixed-pitch nil :family "InputMono"))
+	   (set-face-attribute 'default frame :font "InputMono-11")
+	   (set-face-attribute 'fixed-pitch frame :family "InputMono"))
 	  ((font-exists-p "Roboto")
-	   (set-face-attribute 'default nil :font "Roboto Mono")
-	   (set-face-attribute 'variable-pitch nil :font "Roboto")
-	   (set-face-attribute 'fixed-pitch nil :font "Roboto Mono")))
-    (toggle-scroll-bar -1)))
+	   (set-face-attribute 'default frame :font "Roboto Mono")
+	   (set-face-attribute 'variable-pitch frame :font "Roboto")
+	   (set-face-attribute 'fixed-pitch frame :font "Roboto Mono"))))))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'my/setup-frame)
   (my/setup-frame))
 
-(add-hook 'text-mode-hook
-               (lambda ()
-                (variable-pitch-mode 1)))
+(add-hook 'text-mode-hook #'variable-pitch-mode)
 
 
 ;;; CUSTOM FILE
@@ -86,10 +85,11 @@ current."
 
 ;;; MAC
 
-(setq ns-right-option-modifier 'none
-      ns-right-command-modifier 'hyper
-      ns-function-modifier 'none
-      use-system-tooltips t)
+(when (eq system-type 'darwin)
+  (setq ns-right-option-modifier 'none
+        ns-right-command-modifier 'hyper
+        ns-function-modifier 'none
+        use-system-tooltips t))
 
 
 ;;; CONVENIENCE FUNCTIONS
@@ -159,9 +159,10 @@ current."
 ;;; PACKAGES
 
 (use-package exec-path-from-shell
-  :if (not (bound-and-true-p ns-emacs-plus-injected-path))
+  :if (and (eq system-type 'darwin)
+           (not (bound-and-true-p ns-emacs-plus-injected-path)))
   :ensure t
-  :init (exec-path-from-shell-initialize))
+  :config (exec-path-from-shell-initialize))
 
 (use-package emacs
   :init
@@ -495,12 +496,17 @@ current."
 
 (use-package dired
   :ensure nil
-  :custom (dired-listing-switches "-lAhvtu")
+  :custom
+  (dired-listing-switches "-lAhvtu")
+  (dired-dwim-target t)
+  (delete-by-moving-to-trash t)
   :config
   (put 'dired-find-alternate-file 'disabled nil)
-  (setq ls-lisp-use-insert-directory-program nil
-	dired-dwim-target t
-	delete-by-moving-to-trash t))
+  (when (eq system-type 'darwin)
+    (if (executable-find "gls")
+        (setq insert-directory-program "gls")
+      (require 'ls-lisp)
+      (setq ls-lisp-use-insert-directory-program nil))))
 
 (use-package async
   :ensure t
