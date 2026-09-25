@@ -39,7 +39,7 @@
 
 ;;; GLOBAL KEY BINDINGS
 
-(keymap-set key-translation-map "<escape>" "C-g")
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (global-set-key (kbd "<apps>") #'other-window)
 (global-set-key (kbd "<menu>") #'other-window)
 (global-set-key (kbd "H-o") #'other-window)
