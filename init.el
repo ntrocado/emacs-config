@@ -332,9 +332,6 @@
          ("M-s" . consult-history) ;; orig. next-matching-history-element
          ("M-r" . consult-history)) ;; orig. previous-matching-history-element
 
-  ;; Enable automatic preview at point
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
   ;; The :init configuration is always executed (Not lazy)
   :init
   ;; Tweak the register preview for `consult-register-load',
@@ -394,9 +391,7 @@
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :ensure t ; only need to install it, embark loads it after consult if found
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+  :ensure t)
 
 (use-package corfu
   :ensure t
@@ -801,6 +796,10 @@
 (use-package consult-org-roam
    :ensure t
    :after org-roam
+   :init
+   (require 'consult-org-roam)
+   ;; Activate the minor mode
+   (consult-org-roam-mode 1)
    :custom
    ;; Use `ripgrep' for searching with `consult-org-roam-search'
    (consult-org-roam-grep-func #'consult-ripgrep)
@@ -810,8 +809,6 @@
    ;; in consult-buffer (and not down at the bottom)
    (consult-org-roam-buffer-after-buffers t)
    :config
-   ;; Activate the minor mode
-   (consult-org-roam-mode 1)
    ;; Eventually suppress previewing for certain functions
    (consult-customize
     consult-org-roam-forward-links
