@@ -18,7 +18,8 @@
       enable-recursive-minibuffers t
       recentf-max-saved-items 50
       time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S"
-      large-file-warning-threshold 50000000)
+      large-file-warning-threshold 50000000
+      native-comp-async-report-warnings-errors 'silent)
 
 ;;;; Backups and auto-saves
 
@@ -1050,17 +1051,15 @@
 
                     (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response)))))))))))
 
-(use-package posframe
-  :ensure t)
-
 (use-package gptel-quick
   :after gptel embark
   :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
   :ensure t
   :config
   (keymap-set embark-general-map "?" #'gptel-quick)
-  (setq gptel-quick-model 'gemini-flash-latest
-        gptel-quick-backend gptel-backend))
+  (setq gptel-quick-model 'gemini-flash-lite-latest
+        gptel-quick-backend gptel-backend
+        gptel-quick-display nil))
 
 ;;; 11. CONVENIENCE UTILITIES
 
