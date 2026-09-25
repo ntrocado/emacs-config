@@ -1,6 +1,8 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el --- Emacs configuration -*- lexical-binding: t; -*-
 
-;;; GENERAL DEFAULTS
+;;; 1. GENERAL DEFAULTS
+
+;;;; Core defaults
 
 (prefer-coding-system 'utf-8)
 (setq epa-pinentry-mode 'loopback)
@@ -18,33 +20,47 @@
       time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S"
       large-file-warning-threshold 50000000)
 
-
-;;; BACKUPS AND AUTO-SAVES
+;;;; Backups and auto-saves
 
 (let ((backup-dir (file-name-concat user-emacs-directory "backups")))
   (setq backup-directory-alist (list (cons ".*" backup-dir))
-	delete-old-versions t
-	kept-new-versions 6
-	kept-old-versions 2
-	version-control t
-	backup-by-copying t))
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t
+        backup-by-copying t))
 
 (let ((save-files-directory
        (file-name-concat user-emacs-directory
                          "auto-save/")))
   (make-directory save-files-directory :parents)
   (setq auto-save-file-name-transforms
-	`((".*" ,save-files-directory t))))
+        `((".*" ,save-files-directory t))))
 
+;;;; Custom file
 
-;;; GLOBAL KEY BINDINGS
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;;; 2. DISPLAY, FRAMES & OS INTEGRATION
+
+;;;; macOS settings
+
+(when (eq system-type 'darwin)
+  (setq ns-right-option-modifier 'none
+        ns-right-command-modifier 'hyper
+        ns-function-modifier 'none
+        use-system-tooltips t))
+
+;;;; Global window and navigation keybindings
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (keymap-global-set "<apps>" #'other-window)
 (keymap-global-set "<menu>" #'other-window)
 (keymap-global-set "H-o" #'other-window)
 
-;;; Set default font and hide scroll-bar
+;;;; Font and frame geometry
 
 (defun my/font-exists-p (font)
   "Check if FONT exists."
@@ -64,15 +80,15 @@
                                        (height . 40))))
     (with-selected-frame frame
       (cond ((my/font-exists-p "Noto Sans")
-	     (set-face-attribute 'default frame :font "Noto Sans Mono" :weight 'normal)
-	     (set-face-attribute 'variable-pitch frame :font "Noto Sans" :weight 'light))
-	    ((my/font-exists-p "InputMono")
-	     (set-face-attribute 'default frame :font "InputMono-11")
-	     (set-face-attribute 'fixed-pitch frame :family "InputMono"))
-	    ((my/font-exists-p "Roboto")
-	     (set-face-attribute 'default frame :font "Roboto Mono")
-	     (set-face-attribute 'variable-pitch frame :font "Roboto")
-	     (set-face-attribute 'fixed-pitch frame :font "Roboto Mono"))))))
+             (set-face-attribute 'default frame :font "Noto Sans Mono" :weight 'normal)
+             (set-face-attribute 'variable-pitch frame :font "Noto Sans" :weight 'light))
+            ((my/font-exists-p "InputMono")
+             (set-face-attribute 'default frame :font "InputMono-11")
+             (set-face-attribute 'fixed-pitch frame :family "InputMono"))
+            ((my/font-exists-p "Roboto")
+             (set-face-attribute 'default frame :font "Roboto Mono")
+             (set-face-attribute 'variable-pitch frame :font "Roboto")
+             (set-face-attribute 'fixed-pitch frame :font "Roboto Mono"))))))
 
 (add-hook 'after-make-frame-functions #'my/setup-frame)
 (unless (daemonp)
@@ -85,93 +101,22 @@
 
 (add-hook 'text-mode-hook #'variable-pitch-mode)
 
+;;; 3. PACKAGE MANAGEMENT & ENVIRONMENT
 
-;;; CUSTOM FILE
-
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
-
-;;; MAC
-
-(when (eq system-type 'darwin)
-  (setq ns-right-option-modifier 'none
-        ns-right-command-modifier 'hyper
-        ns-function-modifier 'none
-        use-system-tooltips t))
-
-
-;;; CONVENIENCE FUNCTIONS
-
-(defun my/remove-newlines-and-hyphens (begin end)
-  (interactive "r")
-  (let ((text (buffer-substring-no-properties begin end)))
-    (kill-region begin end)
-    (insert
-     (replace-regexp-in-string "\n" " "
-			       (replace-regexp-in-string "-\n" "" text)))))
-
-(defun my/insert-time-stamp ()
-  "Insert a time-stamp at point."
-  (interactive)
-  (when (derived-mode-p 'org-mode) ; org files get a commented-out time-stamp
-    (insert "# "))
-  (insert "Time-stamp: <>\n"))
-
-(defun my/insert-todays-date ()
-  "Insert today's date in YYYYMMDD format at point."
-  (interactive)
-  (insert (format-time-string "%Y%m%d")))
-
-(keymap-global-set "<f7>" #'my/insert-todays-date)
-
-(defun my/sentence-case (beg end)
-  "Downcase region, but upcase first word and first word after a colon."
-  (interactive "r")
-  (let* ((original-str (buffer-substring-no-properties beg end))
-         (downcased-str (downcase original-str))
-         ;; Step 1: Capitalize the very first word of the downcased string.
-         (capitalized-str
-          (let ((pos (string-match "\\S-" downcased-str)))
-            (if pos
-                (concat (substring downcased-str 0 pos)
-                        (upcase (char-to-string (aref downcased-str pos)))
-                        (substring downcased-str (1+ pos)))
-              downcased-str)))
-         ;; Step 2: Find a colon and capitalize the word after it.
-         (final-str
-          (let* ((colon-pos (string-match ":" capitalized-str))
-                 (next-word-pos (and colon-pos
-                                     (string-match "\\S-" capitalized-str (1+ colon-pos)))))
-            (if next-word-pos
-                (concat (substring capitalized-str 0 next-word-pos)
-                        (upcase (char-to-string (aref capitalized-str next-word-pos)))
-                        (substring capitalized-str (1+ next-word-pos)))
-              capitalized-str))))
-    (delete-region beg end)
-    (goto-char beg)
-    (insert final-str)))
-
-(defun my/current-date ()
-  "Store today's date in YYYYMMDD format in the key ring."
-  (interactive)
-  (kill-new (format-time-string "%Y%m%d")))
-
-
-;;; MELPA
+;;;; MELPA repository
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-
-;;; PACKAGES
+;;;; Shell environment inheritance on macOS
 
 (use-package exec-path-from-shell
   :if (and (eq system-type 'darwin)
            (not (bound-and-true-p ns-emacs-plus-injected-path)))
   :ensure t
   :config (exec-path-from-shell-initialize))
+
+;;; 4. UI & THEME
 
 (use-package emacs
   :init
@@ -185,7 +130,7 @@
           (t . (1.0))))
 
   ;; Vertico recommended configurations
-  
+
   ;; Add prompt indicator to `completing-read-multiple'.
   ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
   (defun my/crm-indicator (args)
@@ -214,10 +159,22 @@
   ;; Update timestamp before saving
   :hook (before-save . time-stamp))
 
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :config (golden-ratio-mode))
+
+(use-package which-key
+  :ensure nil
+  :init
+  (which-key-mode 1))
+
 (use-package diminish
   :ensure t
   :config
   (mapcar #'diminish '(eldoc-mode visual-line-mode)))
+
+;;; 5. MINIBUFFER & COMPLETION
 
 (use-package vertico
   :ensure t
@@ -270,7 +227,7 @@
   ;; package.
   (marginalia-mode))
 
-;; Example configuration for Consult
+;; Consult search and navigation commands
 (use-package consult
   :ensure t
   ;; Replace bindings. Lazily loaded by `use-package'.
@@ -286,8 +243,8 @@
          ("C-x b" . consult-buffer) ;; orig. switch-to-buffer
          ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
          ("C-x 5 b" . consult-buffer-other-frame) ;; orig. switch-to-buffer-other-frame
-         ("C-x t b" . consult-buffer-other-tab)	;; orig. switch-to-buffer-other-tab
-         ("C-x r b" . consult-bookmark)		;; orig. bookmark-jump
+         ("C-x t b" . consult-buffer-other-tab) ;; orig. switch-to-buffer-other-tab
+         ("C-x r b" . consult-bookmark)         ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer) ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
@@ -300,7 +257,7 @@
          ("M-g e" . consult-compile-error)
          ("M-g r" . consult-grep-match)
          ("M-g f" . consult-flymake) ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)	 ;; orig. goto-line
+         ("M-g g" . consult-goto-line)   ;; orig. goto-line
          ("M-g M-g" . consult-goto-line) ;; orig. goto-line
          ("M-g o" . consult-outline) ;; Alternative: consult-org-heading
          ("M-g m" . consult-mark)
@@ -324,7 +281,7 @@
          ("M-e" . consult-isearch-history) ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch-history) ;; orig. isearch-edit-string
          ("M-s l" . consult-line) ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)	;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi) ;; needed by consult-line to detect isearch
          ;; Minibuffer history
          :map minibuffer-local-map
          ("M-s" . consult-history) ;; orig. next-matching-history-element
@@ -410,65 +367,7 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev t)
   (add-hook 'completion-at-point-functions #'cape-file))
 
-(use-package ediff
-  :ensure nil
-  :custom
-  (ediff-split-window-function 'split-window-horizontally)
-  (ediff-window-setup-function 'ediff-setup-windows-plain))
-
-(use-package citar
-  :ensure t
-  :init
-  (setq org-cite-global-bibliography '("~/Sync/lab/master.bib"))
-  :config
-  (setq citar-library-paths '("~/Sync/lab/pdf/")
-	citar-notes-paths '("~/Sync/lab/notes/"))
-  (setf (alist-get 'note citar-templates) "${author}. (${year date:4}). ${title}")
-
-  ;; adapted version of the default function citar-org-format-note-default
-  (defun my/citar-org-format-note (key entry)
-    "Format a note from KEY and ENTRY."
-    (let* ((template (citar--get-template 'note))
-           (note-meta (when template
-			(citar-format--entry template entry)))
-           (filepath (expand-file-name
-                      (concat key ".org")
-                      (car citar-notes-paths)))
-           (buffer (find-file filepath)))
-      (with-current-buffer buffer
-	;; This just overrides other template insertion.
-	(erase-buffer)
-	(citar-org-roam-make-preamble key)
-	(insert "#+title: ")
-	(when template (insert note-meta))
-	(insert "\n# Time-stamp: <>\n\n"))))
-  (setq citar-note-format-function #'my/citar-org-format-note)
-  
-  :custom
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar)
-  (org-cite-csl-locales-dir "~/Sync/lab/csl")
-  (citar-bibliography org-cite-global-bibliography)
-  ;; optional: org-cite-insert is also bound to C-c C-x C-@
-  :bind
-  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
-
-(use-package bibtex
-  :ensure nil
-  :custom
-  (bibtex-autokey-name-year-separator "_")
-  (bibtex-autokey-year-title-separator "")
-  (bibtex-autokey-year-length 4)
-  (bibtex-autokey-titleword-length 0)
-  (bibtex-autokey-titlewords 0)
-  (bibtex-autokey-name-case-convert-function #'upcase-initials))
-
-(use-package citar-embark
-  :ensure t
-  :after citar embark
-  :diminish citar-embark-mode
-  :config (citar-embark-mode))
+;;; 6. TEXT EDITING & WRITING
 
 (use-package abbrev
   :ensure nil
@@ -477,6 +376,62 @@
   :config
   (read-abbrev-file (expand-file-name "abbrev_defs" user-emacs-directory))
   (setq save-abbrevs 'silently))
+
+(use-package titlecase
+  :ensure t
+  :custom (titlecase-style 'apa))
+
+(use-package powerthesaurus
+  :ensure t
+  :config
+  ;; https://github.com/SavchenkoValeriy/emacs-powerthesaurus/issues/16
+  (setq powerthesaurus-request-headers
+        (delete '("Accept-Encoding" . "gzip, deflate, br")
+                powerthesaurus-request-headers)))
+
+(use-package ispell
+  :config
+  (setq ispell-program-name "hunspell"
+        ispell-dictionary-alist
+        '(("pt_PT"
+           "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+           "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
+           "" t
+           ("-d" "pt_PT-preao")
+           nil utf-8)
+          ("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
+           ("-d" "en_US")
+           nil iso-8859-1)
+          ("la"    "[iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]" "[^iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]"
+           "" nil
+           ("-d" "la")
+           nil utf-8))
+        ispell-hunspell-dictionary-alist ispell-dictionary-alist
+        ispell-dictionary "en_US"
+        ispell-alternate-dictionary "~/hunspell_en_US")
+
+  (defun my/switch-dictionary ()
+    (interactive)
+    (if (string= ispell-current-dictionary "en_US")
+        (progn (abbrev-mode -1)
+               (ispell-change-dictionary "pt_PT")
+               (setq ispell-alternate-dictionary "~/hunspell_pt_PT-preao"))
+      (progn (abbrev-mode 1)
+             (ispell-change-dictionary "en_US")
+             (setq ispell-alternate-dictionary "~/hunspell_en_US"))))
+
+  :bind
+  ("<f8>" . my/switch-dictionary))
+
+(use-package flyspell
+  :bind (:map flyspell-mode-map
+              ("C-." . nil))
+  :config
+  (setq flyspell-issue-message-flag nil)
+  :hook
+  (text-mode . flyspell-mode))
+
+;;; 7. PROGRAMMING & DEVELOPMENT
 
 (use-package dired
   :ensure nil
@@ -496,33 +451,42 @@
   :ensure t
   :config (dired-async-mode 1))
 
-(use-package titlecase
-  :ensure t
-  :custom (titlecase-style 'apa))
+(use-package ediff
+  :ensure nil
+  :custom
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package magit
+  :ensure t)
+
+(use-package forge
+  :after magit
+  :ensure t)
 
 (use-package paredit
   :ensure t
   :diminish paredit-mode
   :hook ((emacs-lisp-mode
-	  eval-expression-minibuffer-setup
-	  lisp-mode
-	  lisp-interaction-mode
-	  scheme-mode
-	  sly-mrepl-mode)
-	 . enable-paredit-mode)
+          eval-expression-minibuffer-setup
+          lisp-mode
+          lisp-interaction-mode
+          scheme-mode
+          sly-mrepl-mode)
+         . enable-paredit-mode)
   :hook (sly-mrepl-mode . (lambda ()
-			    (let ((oldmap (cdr (assoc 'paredit-mode minor-mode-map-alist)))
-				  (newmap (make-sparse-keymap)))
-			      (set-keymap-parent newmap oldmap)
-			      (define-key newmap (kbd "RET") nil)
-			      (make-local-variable 'minor-mode-overriding-map-alist)
-			      (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
+                            (let ((oldmap (cdr (assoc 'paredit-mode minor-mode-map-alist)))
+                                  (newmap (make-sparse-keymap)))
+                              (set-keymap-parent newmap oldmap)
+                              (define-key newmap (kbd "RET") nil)
+                              (make-local-variable 'minor-mode-overriding-map-alist)
+                              (push `(paredit-mode . ,newmap) minor-mode-overriding-map-alist)))))
 
 (use-package sly
   :ensure t
   :config
   (setq sly-autodoc-use-multiline-p t
-	inferior-lisp-program "sbcl")
+        inferior-lisp-program "sbcl")
 
   ;; TODO: Rename sly-stop-sc, sly-stop-patterns, and cl-patterns-helpers-load to use my/ prefix
   (defun sly-stop-sc ()
@@ -546,68 +510,15 @@
     (define-key sly-doc-map (kbd "s") 'cl-patterns-supercollider-documentation))
 
   :bind (:map sly-mode-map
-	      ("C-." . sly-stop-sc)
-	      ("C-," . sly-stop-patterns))
+              ("C-." . sly-stop-sc)
+              ("C-," . sly-stop-patterns))
   :hook
   (sly-connected . cl-patterns-helpers-load))
 
+(use-package lilypond
+  :defer t)
 
-(use-package magit
-  :ensure t)
-
-(use-package forge
-  :after magit
-  :ensure t)
-
-(use-package circe
-  :ensure t
-  :init
-  (defun my/fetch-password (&rest params)
-    (require 'auth-source)
-    (let ((match (car (apply 'auth-source-search params))))
-      (if match
-          (let ((secret (plist-get match :secret)))
-            (if (functionp secret)
-		(funcall secret)
-              secret))
-	(error "Password not found for %S" params))))
-
-  (defun my/nickserv-password (server)
-    (my/fetch-password :login "trocado" :host "irc.libera.chat"))
-  
-  :config
-  (setq circe-network-options
-	'(("irc.libera.chat"
-	   :port 7000
-           :tls t
-           :nick "trocado"
-	   :user "trocado"
-	   :realname "trocado"
-	   :sasl-username "trocado"
-	   :sasl-password my/nickserv-password
-           :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
-				  "#lispgames" "#supercollider" "#org-mode"
-				  "#clschool" "#emacs-circe" "#lilypond"
-				  "##running" "#org-roam" "##latin" "##latinitas")
-	   :reduce-lurker-spam t))
-	lui-scroll-behavior 'post-output)
-  (require 'circe-color-nicks)
-  (enable-circe-color-nicks)
-  (setq circe-color-nicks-everywhere t))
-
-(use-package powerthesaurus
-  :ensure t
-  :config
-  ;; https://github.com/SavchenkoValeriy/emacs-powerthesaurus/issues/16
-  (setq powerthesaurus-request-headers
-	(delete '("Accept-Encoding" . "gzip, deflate, br")
-		powerthesaurus-request-headers)))
-
-
-(use-package golden-ratio
-  :ensure t
-  :diminish golden-ratio-mode
-  :config (golden-ratio-mode))
+;;; 8. ORG MODE & ACADEMIC WORKFLOW
 
 (use-package org
   :ensure t
@@ -624,10 +535,10 @@
   (org-export-with-toc nil)
   :init
   (setq org-emphasis-regexp-components '("-[:space:]('\"{—"
-					 "-[:space:].,:!?;'\")}\\[—"
-					 "[:space:]"
-					 "."
-					 1))
+                                         "-[:space:].,:!?;'\")}\\[—"
+                                         "[:space:]"
+                                         "."
+                                         1))
   :config
   (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
@@ -642,7 +553,7 @@
 
   (setq org-latex-src-block-backend 'listings)
   (setq org-latex-listings-options
-	'(("frame" "lines")
+        '(("frame" "lines")
           ("basicstyle" "\\ttfamily\\scriptsize")
           ("numbers" "left")
           ("numberstyle" "\\tiny")))
@@ -650,24 +561,24 @@
   (setq org-latex-prefer-user-labels t)
 
   (setq org-latex-classes
-	'(("article" "\\documentclass{scrartcl}"
-	   ("\\section{%s}" . "\\section*{%s}")
-	   ("\\subsection{%s}" . "\\subsection*{%s}")
-	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-	   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-	   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-	  ("report" "\\documentclass[11pt]{report}"
-	   ("\\part{%s}" . "\\part*{%s}")
-	   ("\\chapter{%s}" . "\\chapter*{%s}")
-	   ("\\section{%s}" . "\\section*{%s}")
-	   ("\\subsection{%s}" . "\\subsection*{%s}")
-	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-	  ("book" "\\documentclass[11pt]{book}"
-	   ("\\part{%s}" . "\\part*{%s}")
-	   ("\\chapter{%s}" . "\\chapter*{%s}")
-	   ("\\section{%s}" . "\\section*{%s}")
-	   ("\\subsection{%s}" . "\\subsection*{%s}")
-	   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+        '(("article" "\\documentclass{scrartcl}"
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+          ("report" "\\documentclass[11pt]{report}"
+           ("\\part{%s}" . "\\part*{%s}")
+           ("\\chapter{%s}" . "\\chapter*{%s}")
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+          ("book" "\\documentclass[11pt]{book}"
+           ("\\part{%s}" . "\\part*{%s}")
+           ("\\chapter{%s}" . "\\chapter*{%s}")
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 
   (setq org-export-with-smart-quotes t)
 
@@ -675,7 +586,7 @@
   (setq org-html-htmlize-output-type 'css)
 
   (setq org-publish-project-alist
-	'(("org-trocado"
+        '(("org-trocado"
            ;; Path to your org files.
            :base-directory "~/Sync/Practice-log/"
            :base-extension "org"
@@ -688,14 +599,14 @@
            :html-extension "html"
            :body-only t) ;; Only export section between <body> </body>
 
-	  ("org-static-trocado"
+          ("org-static-trocado"
            :base-directory "~/Sync/Practice-log/"
            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php\\|svg"
            :publishing-directory "~/Sync/ntrocado.github.io/"
            :recursive t
            :publishing-function org-publish-attachment)
 
-	  ("blog" :components ("org-trocado" "org-static-trocado"))))
+          ("blog" :components ("org-trocado" "org-static-trocado"))))
 
   (defun org-custom-link-img-follow (path)
     (org-open-file-with-emacs
@@ -715,50 +626,50 @@
   "Convert org-ref citations to org-cite format."
   (interactive)
   (let ((conversions '(("citet" . "/text")
-		       ("nocite" . "/nocite")
-		       ("citeyear" . "/noauthor")))) ;TODO: add others
+                       ("nocite" . "/nocite")
+                       ("citeyear" . "/noauthor")))) ;TODO: add others
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward (rx "[["
-				    (group (*? nonl) "cite" (*? nonl))
-				    ":"
-				    (group (+? nonl)) ;reference(s)
-				    (? (group space (+? nonl))) ;post
-				    "]]")
-				nil t)
-	(replace-match (format "[%s:%s%s]"
-			       (concat "cite" (assoc-default (match-string 1) conversions))
-			       (replace-regexp-in-string "&" "@" (match-string 2))
-			       (or (match-string 3) ""))
-		       nil nil)))))
+                                    (group (*? nonl) "cite" (*? nonl))
+                                    ":"
+                                    (group (+? nonl)) ;reference(s)
+                                    (? (group space (+? nonl))) ;post
+                                    "]]")
+                                nil t)
+        (replace-match (format "[%s:%s%s]"
+                               (concat "cite" (assoc-default (match-string 1) conversions))
+                               (replace-regexp-in-string "&" "@" (match-string 2))
+                               (or (match-string 3) ""))
+                       nil nil)))))
 
   (defun my/org-heading-format ()
     (concat "[ " (org-format-outline-path (org-get-outline-path)) " ] "))
 
   (setq org-agenda-files '("~/Sync/tarefas.org")
-	org-log-done 'time
-	org-agenda-prefix-format '((agenda . " %i %s %(my/org-heading-format)")
-				   (timeline . "  % s")
-				   (todo .
-					 " %i %-12:c %(my/org-heading-format)")
-				   (tags .
-					 " %i %-12:c %(my/org-heading-format)")
-				   (search . " %i %-12:c"))
-	org-agenda-skip-scheduled-if-deadline-is-shown t
-	org-deadline-warning-days 90)
+        org-log-done 'time
+        org-agenda-prefix-format '((agenda . " %i %s %(my/org-heading-format)")
+                                   (timeline . "  % s")
+                                   (todo .
+                                         " %i %-12:c %(my/org-heading-format)")
+                                   (tags .
+                                         " %i %-12:c %(my/org-heading-format)")
+                                   (search . " %i %-12:c"))
+        org-agenda-skip-scheduled-if-deadline-is-shown t
+        org-deadline-warning-days 90)
 
   :bind (("C-c a" . org-agenda)
-	 ("C-c l" . org-store-link)
-	 :map org-mode-map
-	 ("C-c C-d" . org-deadline)
-	 ("<M-S-left>" . nil)
-	 ("<M-S-right>" . nil)
-	 ("<M-left>" . nil)
-	 ("<M-right>" . nil)
-	 ("<C-S-right>" . org-shiftmetaright)
-	 ("<C-S-left>" . org-shiftmetaleft)
-	 ("<C-right>" . org-metaright)
-	 ("<C-left>" . org-metaleft)))
+         ("C-c l" . org-store-link)
+         :map org-mode-map
+         ("C-c C-d" . org-deadline)
+         ("<M-S-left>" . nil)
+         ("<M-S-right>" . nil)
+         ("<M-left>" . nil)
+         ("<M-right>" . nil)
+         ("<C-S-right>" . org-shiftmetaright)
+         ("<C-S-left>" . org-shiftmetaleft)
+         ("<C-right>" . org-metaright)
+         ("<C-left>" . org-metaleft)))
 
 (use-package org-roam
   :after org
@@ -775,17 +686,17 @@
   (org-roam-db-autosync-mode)
 
   (add-to-list 'display-buffer-alist
-	       '("\\*org-roam\\*"
-		 (display-buffer-in-direction)
-		 (direction . right)
-		 (window-width . 0.33)
-		 (window-height . fit-window-to-buffer)))
+               '("\\*org-roam\\*"
+                 (display-buffer-in-direction)
+                 (direction . right)
+                 (window-width . 0.33)
+                 (window-height . fit-window-to-buffer)))
 
   (setq org-roam-capture-templates
-	'(("d" "default" plain "%?" :target
-	   (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-		      "#+title: ${title}\n# Time-stamp: <>\n")
-	   :unnarrowed t))))
+        '(("d" "default" plain "%?" :target
+           (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                      "#+title: ${title}\n# Time-stamp: <>\n")
+           :unnarrowed t))))
 
 (use-package consult-org-roam
    :ensure t
@@ -828,89 +739,132 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
+(use-package citar
+  :ensure t
+  :init
+  (setq org-cite-global-bibliography '("~/Sync/lab/master.bib"))
+  :config
+  (setq citar-library-paths '("~/Sync/lab/pdf/")
+        citar-notes-paths '("~/Sync/lab/notes/"))
+  (setf (alist-get 'note citar-templates) "${author}. (${year date:4}). ${title}")
+
+  ;; adapted version of the default function citar-org-format-note-default
+  (defun my/citar-org-format-note (key entry)
+    "Format a note from KEY and ENTRY."
+    (let* ((template (citar--get-template 'note))
+           (note-meta (when template
+                        (citar-format--entry template entry)))
+           (filepath (expand-file-name
+                      (concat key ".org")
+                      (car citar-notes-paths)))
+           (buffer (find-file filepath)))
+      (with-current-buffer buffer
+        ;; This just overrides other template insertion.
+        (erase-buffer)
+        (citar-org-roam-make-preamble key)
+        (insert "#+title: ")
+        (when template (insert note-meta))
+        (insert "\n# Time-stamp: <>\n\n"))))
+  (setq citar-note-format-function #'my/citar-org-format-note)
+
+  :custom
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (org-cite-csl-locales-dir "~/Sync/lab/csl")
+  (citar-bibliography org-cite-global-bibliography)
+  ;; optional: org-cite-insert is also bound to C-c C-x C-@
+  :bind
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
+
+(use-package bibtex
+  :ensure nil
+  :custom
+  (bibtex-autokey-name-year-separator "_")
+  (bibtex-autokey-year-title-separator "")
+  (bibtex-autokey-year-length 4)
+  (bibtex-autokey-titleword-length 0)
+  (bibtex-autokey-titlewords 0)
+  (bibtex-autokey-name-case-convert-function #'upcase-initials))
+
+(use-package citar-embark
+  :ensure t
+  :after citar embark
+  :diminish citar-embark-mode
+  :config (citar-embark-mode))
+
 (use-package ox-typst
-  :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest) 
+  :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest)
   :ensure t
   :after org
   :custom (org-typst-process "typst c --root ~/Sync/ \"%s\""))
 
-(use-package ispell
+(use-package scratch
+  :ensure t
+  :bind ("<f12>" . (lambda () (interactive) (scratch 'org-mode))))
+
+;;; 9. MEDIA & COMMUNICATIONS
+
+(use-package pdf-tools
+  :ensure t
   :config
-  (setq ispell-program-name "hunspell"
-	ispell-dictionary-alist
-	'(("pt_PT"
-	   "[aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	   "[^aerisontcdmlupvgbfzáhçqjíxãóéêâúõACMPSBTELGRIFVDkHJONôywUKXZWQÁYÍÉàÓèÂÚ]"
-	   "" t
-	   ("-d" "pt_PT-preao")
-	   nil utf-8)
-	  ("en_US" "[A-Za-z]" "[^A-Za-z]" "[']" nil
-	   ("-d" "en_US")
-	   nil iso-8859-1)
-	  ("la"	   "[iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]" "[^iastnokreuldvmgpjbyczfhwxqāâăáàãēĕèéêëæǣǽīĭìíĩïōŏóòôœūŭúùũýŷÿöIASTNOKREULDVMGPJBCZFHWXQÂÀÁĀĂÃÉÈÊËĒĔÆǢÍÌĪÎÏÒÓŌŎÔÕŒÙÚŪŬÛŨÝŶŸ]"
-	   "" nil
-	   ("-d" "la")
-	   nil utf-8))
-	ispell-hunspell-dictionary-alist ispell-dictionary-alist
-	ispell-dictionary "en_US"
-	ispell-alternate-dictionary "~/hunspell_en_US")
+  (pdf-tools-install)
+  :custom
+  (pdf-misc-print-program-executable "/usr/bin/lpr"))
 
-  (defun my/switch-dictionary ()
-    (interactive)
-    (if (string= ispell-current-dictionary "en_US")
-	(progn (abbrev-mode -1)
-	       (ispell-change-dictionary "pt_PT")
-	       (setq ispell-alternate-dictionary "~/hunspell_pt_PT-preao"))
-      (progn (abbrev-mode 1)
-	     (ispell-change-dictionary "en_US")
-	     (setq ispell-alternate-dictionary "~/hunspell_en_US"))))
+(use-package pdf-view
+  :hook (pdf-view-mode . (lambda ()
+                           (setq-local mode-line-position
+                                       '(" P " (:eval (number-to-string (pdf-view-current-page)))
+                                         ;; Avoid errors during redisplay.
+                                         ":" (:eval (or (ignore-errors
+                                                          (number-to-string (pdf-cache-number-of-pages)))
+                                                        "???"))
+                                         "  PL " (:eval (pdf-view-current-pagelabel)))))))
 
-  :bind
-  ("<f8>" . my/switch-dictionary))
+(use-package saveplace-pdf-view
+  :ensure t)
 
-(use-package flyspell
-  :bind (:map flyspell-mode-map
-	      ("C-." . nil))
-  :config 
-  (setq flyspell-issue-message-flag nil)
-  :hook 
-  (text-mode . flyspell-mode))
+(use-package nov
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
 
 (use-package eww
   :config
   (setq shr-width 100)
   (setq shr-color-visible-luminance-min 90))
 
-;;; Notmuch
+;;;; Notmuch (GNU/Linux)
 (when (eql system-type 'gnu/linux)
   (load-file (expand-file-name "notmuch-config.el" user-emacs-directory)))
 
 (use-package gnus
   :config
   (setq user-full-name "Nuno Trocado"
-	user-mail-address "nuno@nunotrocado.com"
-	send-mail-function 'smtpmail-send-it
-	smtpmail-smtp-server "smtp.fastmail.com"
-	smtpmail-stream-type 'ssl
-	smtpmail-smtp-service 465
-	smtpmail-servers-requiring-authorization "fastmail"
-	gnus-message-archive-group "nnimap+Mail:Sent"
-	gnus-select-method
-	'(nnimap "fastmail"
-		 (nnimap-address "imap.fastmail.com")
-		 (nnimap-server-port 993)
-		 (nnimap-stream ssl))
-	gnus-large-newsgroup 1000
-	gnus-user-date-format-alist '((t . "%Y-%m-%d"))
-	gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
-	gnus-always-read-dribble-file t))
+        user-mail-address "nuno@nunotrocado.com"
+        send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "smtp.fastmail.com"
+        smtpmail-stream-type 'ssl
+        smtpmail-smtp-service 465
+        smtpmail-servers-requiring-authorization "fastmail"
+        gnus-message-archive-group "nnimap+Mail:Sent"
+        gnus-select-method
+        '(nnimap "fastmail"
+                 (nnimap-address "imap.fastmail.com")
+                 (nnimap-server-port 993)
+                 (nnimap-stream ssl))
+        gnus-large-newsgroup 1000
+        gnus-user-date-format-alist '((t . "%Y-%m-%d"))
+        gnus-summary-line-format "%U%R%I  %&user-date;  %(%[ %-23,23f %]%) %s\\n"
+        gnus-always-read-dribble-file t))
 
-;;; Send e-mail without inserting newlines
+;; Send e-mail without inserting newlines
 (use-package message
   :hook (message-mode . (lambda ()
-			  (auto-fill-mode -1)
-			  (visual-line-mode)
-			  (setq mml-enable-flowed nil)))
+                          (auto-fill-mode -1)
+                          (visual-line-mode)
+                          (setq mml-enable-flowed nil)))
   :config (setq message-kill-buffer-on-exit t))
 
 (use-package message-attachment-reminder
@@ -923,11 +877,12 @@
   (bbdb-initialize 'message 'gnus)
   (bbdb-mua-auto-update-init 'message 'gnus)
   (setq bbdb-mua-action 'create
-	bbdb-mua-pop-up nil
-	bbdb-message-all-addresses t
-	bbdb-allow-duplicates t
-	bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
+        bbdb-mua-pop-up nil
+        bbdb-message-all-addresses t
+        bbdb-allow-duplicates t
+        bbdb-ignore-message-alist '(("From" . "reply\\|daemon\\|server"))))
 
+;; Org-mode -> email
 (use-package org-mime ;; Org-mode → email
   :ensure t
   :config
@@ -936,37 +891,43 @@
                                 :with-author nil
                                 :with-toc nil)))
 
-(use-package lilypond
-  :defer t)
-
-(use-package pdf-tools
+(use-package circe
   :ensure t
+  :init
+  (defun my/fetch-password (&rest params)
+    (require 'auth-source)
+    (let ((match (car (apply 'auth-source-search params))))
+      (if match
+          (let ((secret (plist-get match :secret)))
+            (if (functionp secret)
+                (funcall secret)
+              secret))
+        (error "Password not found for %S" params))))
+
+  (defun my/nickserv-password (server)
+    (my/fetch-password :login "trocado" :host "irc.libera.chat"))
+
   :config
-  (pdf-tools-install)
-  :custom
-  (pdf-misc-print-program-executable "/usr/bin/lpr"))
+  (setq circe-network-options
+        '(("irc.libera.chat"
+           :port 7000
+           :tls t
+           :nick "trocado"
+           :user "trocado"
+           :realname "trocado"
+           :sasl-username "trocado"
+           :sasl-password my/nickserv-password
+           :channels (:after-auth "#lisp" "#commonlisp" "#dataflow"
+                                  "#lispgames" "#supercollider" "#org-mode"
+                                  "#clschool" "#emacs-circe" "#lilypond"
+                                  "##running" "#org-roam" "##latin" "##latinitas")
+           :reduce-lurker-spam t))
+        lui-scroll-behavior 'post-output)
+  (require 'circe-color-nicks)
+  (enable-circe-color-nicks)
+  (setq circe-color-nicks-everywhere t))
 
-(use-package pdf-view
-  :hook (pdf-view-mode . (lambda ()
-			   (setq-local mode-line-position
-				       '(" P " (:eval (number-to-string (pdf-view-current-page)))
-					 ;; Avoid errors during redisplay.
-					 ":" (:eval (or (ignore-errors
-							  (number-to-string (pdf-cache-number-of-pages)))
-							"???"))
-					 "  PL " (:eval (pdf-view-current-pagelabel)))))))
-
-(use-package saveplace-pdf-view
-  :ensure t)
-
-(use-package nov
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
-
-(use-package scratch
-  :ensure t
-  :bind ("<f12>" . (lambda () (interactive) (scratch 'org-mode))))
+;;; 10. AI TOOLS (GPTEL) & PDF INGESTION
 
 (use-package gptel
   :ensure t
@@ -983,26 +944,26 @@
           (funcall secret)
         secret)))
 
-  (setq gptel-backend 
-        (gptel-make-gemini "Gemini" 
-          :key (lambda () (my/get-auth-secret "gemini")) 
+  (setq gptel-backend
+        (gptel-make-gemini "Gemini"
+          :key (lambda () (my/get-auth-secret "gemini"))
           :stream t))
 
-  (gptel-make-perplexity "Perplexity" 
-    :key (lambda () (my/get-auth-secret "perplexity")) 
+  (gptel-make-perplexity "Perplexity"
+    :key (lambda () (my/get-auth-secret "perplexity"))
     :stream t))
 
 (defun my/ingest-pdf (pdf-file)
     "Extract text from PDF-FILE, ask LLM for metadata, format it, and file it."
     (interactive "fSelect PDF: ")
     (let* ((absolute-pdf (expand-file-name pdf-file))
-           (raw-text (shell-command-to-string 
+           (raw-text (shell-command-to-string
                       (format "pdftotext -l 10 %s -" (shell-quote-argument absolute-pdf))))
            (pdf-text (substring raw-text 0 (min (length raw-text) 15000))))
-      
+
       (if (string-blank-p (string-trim pdf-text))
           (message "Ingest Error: pdftotext extracted no text. Is this a scanned image?")
-          
+
         (let ((prompt (concat "Extract bibliographic metadata from the provided PDF text.\n"
                               "Return ONLY a valid JSON object. Do not include markdown formatting.\n"
                               "Use \"UNKNOWN\" for any field you cannot find. Do not hallucinate data.\n\n"
@@ -1023,36 +984,36 @@
                               "}\n\n"
                               "TEXT TO ANALYZE:\n"
                               pdf-text)))
-          
+
           (message "Analyzing PDF metadata...")
-          
-          (gptel-request 
+
+          (gptel-request
               prompt
-            :context absolute-pdf 
+            :context absolute-pdf
             :system "You are a JSON-only extraction agent. Return strictly a JSON object matching the requested template."
             :callback
             (lambda (response info)
               (let ((pdf-file (plist-get info :context)))
-		(if (not response)
+                (if (not response)
                     (message "LLM HTTP Error: %s" (plist-get info :status))
-                 
+
                   (condition-case err
-                      (let* ((clean-json (replace-regexp-in-string "\\`[^{]*" "" 
-								   (replace-regexp-in-string "[^}]*\\'" "" response)))
+                      (let* ((clean-json (replace-regexp-in-string "\\`[^{]*" ""
+                                                                   (replace-regexp-in-string "[^}]*\\'" "" response)))
                              (data (json-parse-string clean-json :object-type 'alist))
                              (author   (alist-get 'author data))
                              (year     (alist-get 'year data))
                              (title    (alist-get 'title data))
                              (raw-key  (alist-get 'cite_key data))
                              (raw-bib  (alist-get 'bibtex data))
-                            
-                             (cite-key (if raw-key 
-                                           (concat (upcase (substring raw-key 0 1)) (substring raw-key 1)) 
+
+                             (cite-key (if raw-key
+                                           (concat (upcase (substring raw-key 0 1)) (substring raw-key 1))
                                          "UNKNOWN")))
-                       
-			(if (or (string= cite-key "UNKNOWN") (string-match-p "unknown" (downcase cite-key)))
+
+                        (if (or (string= cite-key "UNKNOWN") (string-match-p "unknown" (downcase cite-key)))
                             (message "Ingest Aborted. LLM output: %s" clean-json)
-                         
+
                           (let ((formatted-bibtex
                                  (with-temp-buffer
                                    (insert raw-bib)
@@ -1063,30 +1024,30 @@
                                    (setq bibtex-align-at-equal-sign t)
                                    (bibtex-fill-entry)
                                    (buffer-string)))
-                               
-				(new-pdf-name (expand-file-name (format "%s.pdf" cite-key) "~/Sync/lab/pdf/"))
-				(bib-file (expand-file-name "master.bib" "~/Sync/lab/"))
-				(org-file (expand-file-name "biblog.org" "~/Sync/Doutoramento/")))
-                           
+
+                                (new-pdf-name (expand-file-name (format "%s.pdf" cite-key) "~/Sync/lab/pdf/"))
+                                (bib-file (expand-file-name "master.bib" "~/Sync/lab/"))
+                                (org-file (expand-file-name "biblog.org" "~/Sync/Doutoramento/")))
+
                             (rename-file pdf-file new-pdf-name t)
                             (append-to-file (format "\n%s\n" formatted-bibtex) nil bib-file)
-                           
+
                             (with-current-buffer (find-file-noselect org-file)
                               (goto-char (point-max))
-			      (unless (bolp) (insert "\n"))
+                              (unless (bolp) (insert "\n"))
                               (insert (format "* %s (%s) %s\n" author year title))
                               (insert (format "[cite:@%s]\n" cite-key))
                               (save-buffer))
-                           
+
                             (let ((bib-buf (get-file-buffer bib-file))
                                   (org-buf (get-file-buffer org-file)))
                               (when bib-buf
-				(with-current-buffer bib-buf (revert-buffer t t t)))
+                                (with-current-buffer bib-buf (revert-buffer t t t)))
                               (when org-buf
-				(with-current-buffer org-buf (revert-buffer t t t))))
-                           
+                                (with-current-buffer org-buf (revert-buffer t t t))))
+
                             (message "Success! Ingested %s." cite-key))))
-                   
+
                     (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response)))))))))))
 
 (use-package gptel-quick
@@ -1096,9 +1057,62 @@
   :config
   (keymap-set embark-general-map "?" #'gptel-quick)
   (setq gptel-quick-model 'gemini-2.0-flash-exp
-	gptel-quick-backend gptel-backend))
+        gptel-quick-backend gptel-backend))
 
-(use-package which-key
-  :ensure nil
-  :init
-  (which-key-mode 1))
+;;; 11. CONVENIENCE UTILITIES
+
+(defun my/remove-newlines-and-hyphens (begin end)
+  (interactive "r")
+  (let ((text (buffer-substring-no-properties begin end)))
+    (kill-region begin end)
+    (insert
+     (replace-regexp-in-string "\n" " "
+                               (replace-regexp-in-string "-\n" "" text)))))
+
+(defun my/insert-time-stamp ()
+  "Insert a time-stamp at point."
+  (interactive)
+  (when (derived-mode-p 'org-mode) ; org files get a commented-out time-stamp
+    (insert "# "))
+  (insert "Time-stamp: <>\n"))
+
+(defun my/insert-todays-date ()
+  "Insert today's date in YYYYMMDD format at point."
+  (interactive)
+  (insert (format-time-string "%Y%m%d")))
+
+(keymap-global-set "<f7>" #'my/insert-todays-date)
+
+(defun my/sentence-case (beg end)
+  "Downcase region, but upcase first word and first word after a colon."
+  (interactive "r")
+  (let* ((original-str (buffer-substring-no-properties beg end))
+         (downcased-str (downcase original-str))
+         ;; Step 1: Capitalize the very first word of the downcased string.
+         (capitalized-str
+          (let ((pos (string-match "\\S-" downcased-str)))
+            (if pos
+                (concat (substring downcased-str 0 pos)
+                        (upcase (char-to-string (aref downcased-str pos)))
+                        (substring downcased-str (1+ pos)))
+              downcased-str)))
+         ;; Step 2: Find a colon and capitalize the word after it.
+         (final-str
+          (let* ((colon-pos (string-match ":" capitalized-str))
+                 (next-word-pos (and colon-pos
+                                     (string-match "\\S-" capitalized-str (1+ colon-pos)))))
+            (if next-word-pos
+                (concat (substring capitalized-str 0 next-word-pos)
+                        (upcase (char-to-string (aref capitalized-str next-word-pos)))
+                        (substring capitalized-str (1+ next-word-pos)))
+              capitalized-str))))
+    (delete-region beg end)
+    (goto-char beg)
+    (insert final-str)))
+
+(defun my/current-date ()
+  "Store today's date in YYYYMMDD format in the key ring."
+  (interactive)
+  (kill-new (format-time-string "%Y%m%d")))
+
+;;; init.el ends here
