@@ -768,6 +768,40 @@
         (insert "\n# Time-stamp: <>\n\n"))))
   (setq citar-note-format-function #'my/citar-org-format-note)
 
+  (defun my/citar-open-file-and-note (citekey-or-citekeys &optional keep-windows)
+    "Open library file (PDF) and note for CITEKEY-OR-CITEKEYS side by side.
+With prefix argument KEEP-WINDOWS (\\[universal-argument]), do not delete
+other windows before splitting."
+    (interactive (list (citar-select-refs) current-prefix-arg))
+    (let* ((keys (ensure-list citekey-or-citekeys))
+           (key (car keys))
+           (single-keys (list key)))
+      (unless key
+        (user-error "No reference specified"))
+      (let ((file-res (citar--select-resource single-keys :files t))
+            (note-res (citar--select-resource single-keys :notes t :create-notes t)))
+        (unless (or file-res note-res)
+          (user-error "No associated file or note found for %s" key))
+        (unless keep-windows
+          (delete-other-windows))
+        (cond
+         ;; Both file and note exist (or note can be created)
+         ((and file-res note-res)
+          (citar--open-resource (cdr file-res) (car file-res))
+          (let ((note-win (or (ignore-errors (split-window-right))
+                              (split-window-below))))
+            (select-window note-win)
+            (citar--open-resource (cdr note-res) (car note-res))))
+         ;; Only file exists
+         (file-res
+          (citar--open-resource (cdr file-res) (car file-res)))
+         ;; Only note exists
+         (note-res
+          (citar--open-resource (cdr note-res) (car note-res)))))))
+
+  (define-key citar-map (kbd "s") #'my/citar-open-file-and-note)
+  (define-key citar-citation-map (kbd "s") #'my/citar-open-file-and-note)
+
   :custom
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
@@ -792,7 +826,9 @@
   :ensure t
   :after citar embark
   :diminish citar-embark-mode
-  :config (citar-embark-mode))
+  :config
+  (citar-embark-mode)
+  (cl-pushnew #'my/citar-open-file-and-note embark-multitarget-actions))
 
 (use-package ox-typst
   :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest)
