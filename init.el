@@ -1087,6 +1087,177 @@ other windows before splitting."
 
                     (error (message "Ingest Error: LLM returned invalid JSON. Raw output: %s" response)))))))))))
 
+(defun my/gptel-ai-assist ()
+  "Context-aware writing assistant for `gptel`.
+Dynamically detects and mirrors whatever register/tone is used in context
+(from conversational and playful to formal academic).
+When a region is active, offers 5 tone/style rewrites.
+Otherwise, provides 3 completions matching the immediate context."
+  (interactive)
+  (let ((buf (current-buffer)))
+    (if (use-region-p)
+        (let* ((beg (copy-marker (region-beginning)))
+               (end (copy-marker (region-end) t))
+               (orig-text (buffer-substring-no-properties beg end))
+               (ctx-pre-start (max (point-min) (- beg 2000)))
+               (ctx-post-end  (min (point-max) (+ end 800)))
+               (prefix (buffer-substring-no-properties ctx-pre-start beg))
+               (suffix (buffer-substring-no-properties end ctx-post-end))
+               (prompt
+                (format
+                 "Rewrite the ideas in TARGET TEXT in five styles.
+
+SURROUNDING CONTEXT:
+\"\"\"
+%s[TARGET]%s
+\"\"\"
+
+TARGET TEXT (raw content to rewrite):
+\"\"\"
+%s
+\"\"\"
+
+CRITICAL TONE INSTRUCTION:
+Derive the voice, formality, rhythm, and vocabulary EXCLUSIVELY from the SURROUNDING CONTEXT.
+Treat TARGET TEXT purely as raw meaning/information to convey; do NOT consider or mimic its voice, phrasing, or tone (which may be a rough draft, a note, or an external quote that clashes with the document).
+
+Provide rewrites for these styles:
+1. Context : Match the exact voice, slang/colloquialisms, punctuation, and rhythm of the SURROUNDING CONTEXT only. If the context is casual, stay casual; if technical or literary, match it.
+2. Concise : Strip filler words; make it as punchy and direct as possible.
+3. Formal  : Academic rigor, objective tone, and disciplinary precision.
+4. Hedge   : Soften claims with tentative phrasing ('suggests', 'tends to indicate').
+5. Plain   : Crystal-clear, simple everyday language with zero jargon.
+
+Format output EXACTLY as:
+[Context ] <revised text>
+[Concise ] <revised text>
+[Formal  ] <revised text>
+[Hedge   ] <revised text>
+[Plain   ] <revised text>" prefix suffix orig-text)))
+          (message "Generating styled variations...")
+          (let ((gptel-use-context nil))
+            (gptel-request
+             prompt
+             :system "You are an adaptive writing editor. Derive tone, sentence length, and vocabulary strictly from the surrounding context, never from the passage being rewritten."
+             :callback
+             (lambda (response info)
+               (run-at-time
+                0 nil
+                (lambda ()
+                  (condition-case err
+                      (unwind-protect
+                          (cond
+                           ((not (stringp response))
+                            (message "gptel rewrite failed: %s" (plist-get info :status)))
+                           ((not (buffer-live-p buf))
+                            (message "Target buffer no longer exists."))
+                           (t
+                            (let* ((clean-resp (replace-regexp-in-string "\\`[[:space:]]*```[a-zA-Z]*\n?\\|```[[:space:]]*\\'" "" (string-trim response)))
+                                   (candidates nil)
+                                   (pos 0))
+                              ;; Match sections starting with [Style] across multiple lines
+                              (while (string-match "^[[:space:]]*\\[\\([^]]+\\)\\][[:space:]]*" clean-resp pos)
+                                (let* ((style (string-trim (match-string 1 clean-resp)))
+                                       (body-start (match-end 0))
+                                       (next-match (string-match "^[[:space:]]*\\[[^]]+\\]" clean-resp body-start))
+                                       (body-end (or next-match (length clean-resp)))
+                                       (text (string-trim (substring clean-resp body-start body-end)))
+                                       (preview (format "[%-8s]  %s" style (replace-regexp-in-string "[\t\n ]+" " " text))))
+                                  (push (cons preview text) candidates)
+                                  (setq pos body-end)))
+                              (setq candidates (nreverse candidates))
+                              (if (null candidates)
+                                  (message "Could not parse styled responses. Raw output:\n%s" response)
+                                (let* ((choice-label (completing-read "Select rewrite: "
+                                                                     (mapcar #'car candidates)
+                                                                     nil t))
+                                       (selected-text (cdr (assoc choice-label candidates))))
+                                  (when (and selected-text (not (string-empty-p selected-text)))
+                                    (with-current-buffer buf
+                                      (undo-boundary)
+                                      (delete-region beg end)
+                                      (goto-char beg)
+                                      (insert selected-text)
+                                      (undo-boundary))
+                                    (message "Replaced with %s rewrite."
+                                             (string-trim (car (split-string choice-label "]" t)) "\\[" ""))))))))
+                        ;; Clean up markers
+                        (set-marker beg nil)
+                        (set-marker end nil))
+                    (quit (message "Rewrite cancelled."))
+                    (error (message "Rewrite error: %s" (error-message-string err))))))))))
+
+      (let* ((pt (copy-marker (point) t))
+             (prefix-start (max (point-min) (- pt 2500)))
+             (suffix-end   (min (point-max) (+ pt 1000)))
+             (prefix (buffer-substring-no-properties prefix-start pt))
+             (suffix (buffer-substring-no-properties pt suffix-end))
+             (prompt
+              (format
+               "You are a chameleon writing assistant. Complete the unfinished thought right at [CURSOR].
+
+CRITICAL INSTRUCTIONS:
+- First, detect the register of the text (e.g., casual/conversational, enthusiastic, playful, dry, or formal).
+- Mirror that EXACT register. If the text uses exclamation marks, slang, or informal rhetoric (e.g. 'Wicked!', 'So that\\'s what people say!'), DO NOT use high-brow Latinate jargon or academic stiffness.
+- Flow seamlessly from the text right before [CURSOR] into whatever comes after it.
+- Produce only the immediate clause or sentence.
+- Provide exactly 3 diverse completions in the matched tone.
+- Output ONLY the 3 options, each on its own line, strictly separated by three dashes '---'.
+
+Text before [CURSOR]:
+\"\"\"
+%s
+\"\"\"
+
+Text after [CURSOR]:
+\"\"\"
+%s
+\"\"\"" prefix suffix)))
+        (message "Generating tone-matched completions...")
+        (let ((gptel-use-context nil))
+          (gptel-request
+           prompt
+           :system "You are a writing assistant that seamlessly matches the author's tone, voice, and register."
+           :callback
+           (lambda (response info)
+             (run-at-time
+              0 nil
+              (lambda ()
+                (condition-case err
+                    (unwind-protect
+                        (cond
+                         ((not (stringp response))
+                          (message "Completion failed: %s" (plist-get info :status)))
+                         ((not (buffer-live-p buf))
+                          (message "Target buffer no longer exists."))
+                         (t
+                          (let* ((clean-resp (replace-regexp-in-string "\\`[[:space:]]*```[a-zA-Z]*\n?\\|```[[:space:]]*\\'" "" (string-trim response)))
+                                 (raw-choices (split-string clean-resp "---" t))
+                                 (candidates (cl-remove-if #'string-empty-p (mapcar #'string-trim raw-choices))))
+                            ;; Fallback if formatted with numbered list or newlines instead of ---
+                            (when (and (= (length candidates) 1)
+                                       (string-match-p "\n" (car candidates)))
+                              (setq candidates
+                                    (cl-remove-if #'string-empty-p
+                                                  (mapcar (lambda (s)
+                                                            (replace-regexp-in-string "\\`[0-9]+[.)][[:space:]]*" "" (string-trim s)))
+                                                          (split-string (car candidates) "\n" t)))))
+                            (if (null candidates)
+                                (message "No completions returned.")
+                              (let ((choice (completing-read "Complete sentence: " candidates nil t)))
+                                (when (and choice (not (string-empty-p choice)))
+                                  (with-current-buffer buf
+                                    (undo-boundary)
+                                    (goto-char pt)
+                                    (unless (or (bolp) (memq (char-before) '(?\s ?\t ?\n)))
+                                      (insert " "))
+                                    (insert choice)
+                                    (undo-boundary))
+                                  (message "Inserted completion.")))))))
+                      (set-marker pt nil))
+                  (quit (message "Completion cancelled."))
+                  (error (message "Completion error: %s" (error-message-string err)))))))))))))
+
 (use-package gptel-quick
   :after gptel embark
   :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
