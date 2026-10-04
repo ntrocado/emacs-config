@@ -1258,6 +1258,11 @@ Text after [CURSOR]:
                   (quit (message "Completion cancelled."))
                   (error (message "Completion error: %s" (error-message-string err)))))))))))))
 
+(keymap-global-set "C-c g" #'my/gptel-ai-assist)
+
+(with-eval-after-load 'embark
+  (keymap-set embark-region-map "r" #'my/gptel-ai-assist))
+
 (use-package gptel-quick
   :after gptel embark
   :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
