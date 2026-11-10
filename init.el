@@ -881,8 +881,7 @@ other windows before splitting."
 (use-package ox-typst
   :vc (:url https://github.com/ntrocado/ox-typst.git :rev :newest)
   :ensure t
-  :after org
-  :custom (org-typst-process "typst c --root ~/Sync/ \"%s\""))
+  :after org)
 
 (use-package scratch
   :ensure t
