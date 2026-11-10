@@ -541,13 +541,55 @@
   (org-clock-mode-line-total 'current)
   (org-export-with-toc nil)
   :init
-  (setq org-emphasis-regexp-components '("-[:space:]('\"{—"
-                                         "-[:space:].,:!?;'\")}\\[—"
+  (setq org-emphasis-regexp-components '("-[:space:]('\"{—–"
+                                         "-[:space:].,:!?;'\")}\\[—–"
                                          "[:space:]"
                                          "."
                                          1))
   :config
   (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
+
+  (with-eval-after-load 'org-element
+    (defun org-element--parse-generic-emphasis (mark type)
+      "Parse emphasis object at point, if any, allowing em-dash and en-dash boundaries."
+      (save-excursion
+        (let ((origin (point)))
+          (unless (bolp) (forward-char -1))
+          (let ((opening-re
+                 (rx-to-string
+                  `(seq (or line-start (any space ?- ?\( ?' ?\" ?\{ ?— ?–))
+                        ,mark
+                        (not space)))))
+            (when (looking-at-p opening-re)
+              (goto-char (1+ origin))
+              (let ((closing-re
+                     (rx-to-string
+                      `(seq
+                        (not space)
+                        (group ,mark)
+                        (or (any space ?- ?. ?, ?\; ?: ?! ?? ?' ?\" ?\) ?\} ?\\ ?\[ ?— ?–)
+                            line-end)))))
+                (when (re-search-forward closing-re nil t)
+                  (let ((closing (match-end 1)))
+                    (goto-char closing)
+                    (let* ((post-blank (skip-chars-forward " \t"))
+                           (contents-begin (1+ origin))
+                           (contents-end (1- closing)))
+                      (org-element-create
+                       type
+                       (append
+                        (list :begin origin
+                              :end (point)
+                              :post-blank post-blank)
+                        (if (memq type '(code verbatim))
+                            (list :value
+                                  (and (memq type '(code verbatim))
+                                       (org-element-deferred-create
+                                        t #'org-element--substring
+                                        (- contents-begin origin)
+                                        (- contents-end origin))))
+                          (list :contents-begin contents-begin
+                                :contents-end contents-end))))))))))))))
   ;; https://list.orgmode.org/CAKPXLbtS=y_8LaT43zpkZeNrU7n4JNgYPKnws=0nPoDom1TroA@mail.gmail.com/
   (require 'ol-docview)
 
