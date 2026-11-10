@@ -160,6 +160,12 @@
   ;; Update timestamp before saving
   :hook (before-save . time-stamp))
 
+(use-package modus-flexoki
+  :vc (:url "https://github.com/dpassen/modus-flexoki"
+       :rev :newest)
+  :config
+  (load-theme 'modus-flexoki-light :no-confirm))
+
 (use-package golden-ratio
   :ensure t
   :diminish golden-ratio-mode
